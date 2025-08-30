@@ -1,0 +1,25 @@
+<!-- Toolbar -->
+<app-header></app-header>
+<router-outlet></router-outlet>
+
+<div class="card-container">
+  <div class="card" *ngFor="let item of items">
+      <img 
+        [src]="'assets/images/' + item.id + '.PNG'" 
+        class="card-img" 
+        alt="{{ item.name }}" 
+      >
+      <div class="card-body">
+        <h5 class="card-title">{{ item.name }}</h5>
+        <p class="card-price"><strong>Price:</strong> R{{ item.price.toFixed(2) }}</p>
+        <p class="card-quantity">
+          <strong>Quantity:</strong>
+          <span [ngClass]="{'text-danger': item.quantity < 5}">
+            {{ item.quantity }}
+          </span>
+        </p>
+      </div>
+  </div>
+</div>
+
+<app-footer></app-footer>

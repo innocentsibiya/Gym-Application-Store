@@ -1,0 +1,20 @@
+# Node modules (Angular)
+frontend/node_modules/
+frontend/dist/
+
+# Angular environment files
+frontend/src/environments/*.ts
+
+# .NET build files
+backend/bin/
+backend/obj/
+backend/*.user
+backend/*.suo
+
+# Visual Studio files
+.vscode/
+*.vs/
+
+# OS files
+.DS_Store
+Thumbs.db

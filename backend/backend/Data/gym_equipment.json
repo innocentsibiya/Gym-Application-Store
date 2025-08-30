@@ -1,0 +1,58 @@
+[
+  {
+    "id": 1,
+    "name": "2.5KG",
+    "price": 100.00,
+    "quantity": 5,
+    "category": "Dumbell"
+  },
+  {
+    "id": 2,
+    "name": "5KG",
+    "price": 120.00,
+    "quantity": 3,
+    "category": "Dumbell"
+  },
+  {
+    "id": 3,
+    "name": "7.5KG",
+    "price": 150.00,
+    "quantity": 30,
+    "category": "Dumbell"
+  },
+  {
+    "id": 4,
+    "name": "10KG",
+    "price": 180.00,
+    "quantity": 4,
+    "category": "Dumbell"
+  },
+  {
+    "id": 5,
+    "name": "12.5KG",
+    "price": 200.00,
+    "quantity": 10,
+    "category": "Dumbell"
+  },
+  {
+    "id": 6,
+    "name": "15KG",
+    "price": 225.00,
+    "quantity": 15,
+    "category": "Dumbell"
+  },
+  {
+    "id": 7,
+    "name": "20KG",
+    "price": 250.00,
+    "quantity": 7,
+    "category": "Dumbell"
+  },
+  {
+    "id": 8,
+    "name": "25KG",
+    "price": 290.00,
+    "quantity": 12,
+    "category": "Dumbell"
+  }
+]

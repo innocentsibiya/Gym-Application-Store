@@ -1,0 +1,18 @@
+<div class="toolbar" role="banner">
+  <a routerLink="/" class="toolbar-title">Gym Equipment Store</a>
+
+  <a
+    *ngFor="let item of navItems"
+    [routerLink]="item.route"
+    [ngClass]="item.className"
+    class="nav-item"
+  >
+    {{ item.label }}
+  </a>
+
+  <input
+    type="text"
+    class="search-container"
+    placeholder="Search..."
+  />
+</div>
