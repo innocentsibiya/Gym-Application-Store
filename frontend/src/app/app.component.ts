@@ -1,5 +1,6 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { GymItem, GymItemService } from './services/gym-item-service.service';
+import { CardComponent } from './card/card.component';
 
 @Component({
   selector: 'app-root',
@@ -9,7 +10,7 @@ import { GymItem, GymItemService } from './services/gym-item-service.service';
 export class AppComponent {
   title = 'frontend';
   items: GymItem[] = [];
-  gymItem : GymItem | undefined;
+@ViewChild(CardComponent) childComponent!: CardComponent;
 
   constructor(private gymService: GymItemService) {}
 
@@ -17,10 +18,10 @@ export class AppComponent {
     this.gymService.getAll().subscribe(data => {
       this.items = data;
     });
+  }
 
-    this.gymService.getById(1).subscribe(item => {
-      this.gymItem = item;
-    });
+  showItemDetails(item: GymItem): void {
+    this.childComponent.openModal(item);
   }
 
 }

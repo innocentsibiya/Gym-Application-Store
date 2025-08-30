@@ -8,9 +8,10 @@ import { Component } from '@angular/core';
 export class HeaderComponent {
   navItems = [
     { className: 'categories', label: 'Categories', route: '/category' },
-    { className: 'register', label: 'Register', route: '/register' },
     { className: 'about', label: 'About', route: '/about' },
     { className: 'help', label: 'Help', route: '/help' },
+    { className: 'register', label: 'Register', route: '/register' },
+    { className: 'login', label: 'Login', route: '/login' },
     { className: 'cart', label: 'Cart', route: '/cart' }
   ];
 
