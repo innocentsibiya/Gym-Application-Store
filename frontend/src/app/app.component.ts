@@ -1,6 +1,8 @@
 import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { GymItem, GymItemService } from './services/gym-item-service.service';
 import { CardComponent } from './card/card.component';
+import { CartComponent } from './cart/cart.component';
+import { CartService } from './services/cart.service';
 
 @Component({
   selector: 'app-root',
@@ -10,9 +12,11 @@ import { CardComponent } from './card/card.component';
 export class AppComponent {
   title = 'frontend';
   items: GymItem[] = [];
-@ViewChild(CardComponent) childComponent!: CardComponent;
+  cartItems: GymItem[] = [];
+  @ViewChild(CardComponent) childComponent!: CardComponent;
+  @ViewChild(CartComponent) cartComponent!: CartComponent;
 
-  constructor(private gymService: GymItemService) {}
+  constructor(private gymService: GymItemService,private cartService: CartService) {}
 
   ngOnInit(): void {
     this.gymService.getAll().subscribe(data => {
@@ -22,6 +26,12 @@ export class AppComponent {
 
   showItemDetails(item: GymItem): void {
     this.childComponent.openModal(item);
+  }
+
+  addItemToCart(item: GymItem): void {
+    this.cartService.addToCart(item).subscribe(cartItems => {
+      this.cartItems = cartItems;
+    });
   }
 
 }

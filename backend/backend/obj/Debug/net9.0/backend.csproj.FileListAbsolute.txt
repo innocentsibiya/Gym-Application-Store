@@ -1,5 +1,7 @@
 C:\Users\Innocent\source\repos\Gym\backend\backend\bin\Debug\net9.0\appsettings.Development.json
 C:\Users\Innocent\source\repos\Gym\backend\backend\bin\Debug\net9.0\appsettings.json
+C:\Users\Innocent\source\repos\Gym\backend\backend\bin\Debug\net9.0\Data\gym_equipment.json
+C:\Users\Innocent\source\repos\Gym\backend\backend\bin\Debug\net9.0\Data\orders.json
 C:\Users\Innocent\source\repos\Gym\backend\backend\bin\Debug\net9.0\backend.staticwebassets.endpoints.json
 C:\Users\Innocent\source\repos\Gym\backend\backend\bin\Debug\net9.0\backend.exe
 C:\Users\Innocent\source\repos\Gym\backend\backend\bin\Debug\net9.0\backend.deps.json
@@ -8,6 +10,10 @@ C:\Users\Innocent\source\repos\Gym\backend\backend\bin\Debug\net9.0\backend.dll
 C:\Users\Innocent\source\repos\Gym\backend\backend\bin\Debug\net9.0\backend.pdb
 C:\Users\Innocent\source\repos\Gym\backend\backend\bin\Debug\net9.0\Microsoft.AspNetCore.OpenApi.dll
 C:\Users\Innocent\source\repos\Gym\backend\backend\bin\Debug\net9.0\Microsoft.OpenApi.dll
+C:\Users\Innocent\source\repos\Gym\backend\backend\bin\Debug\net9.0\Newtonsoft.Json.dll
+C:\Users\Innocent\source\repos\Gym\backend\backend\bin\Debug\net9.0\Swashbuckle.AspNetCore.Swagger.dll
+C:\Users\Innocent\source\repos\Gym\backend\backend\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+C:\Users\Innocent\source\repos\Gym\backend\backend\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerUI.dll
 C:\Users\Innocent\source\repos\Gym\backend\backend\obj\Debug\net9.0\backend.csproj.AssemblyReference.cache
 C:\Users\Innocent\source\repos\Gym\backend\backend\obj\Debug\net9.0\rpswa.dswa.cache.json
 C:\Users\Innocent\source\repos\Gym\backend\backend\obj\Debug\net9.0\backend.GeneratedMSBuildEditorConfig.editorconfig
@@ -32,7 +38,3 @@ C:\Users\Innocent\source\repos\Gym\backend\backend\obj\Debug\net9.0\refint\backe
 C:\Users\Innocent\source\repos\Gym\backend\backend\obj\Debug\net9.0\backend.pdb
 C:\Users\Innocent\source\repos\Gym\backend\backend\obj\Debug\net9.0\backend.genruntimeconfig.cache
 C:\Users\Innocent\source\repos\Gym\backend\backend\obj\Debug\net9.0\ref\backend.dll
-C:\Users\Innocent\source\repos\Gym\backend\backend\bin\Debug\net9.0\Swashbuckle.AspNetCore.Swagger.dll
-C:\Users\Innocent\source\repos\Gym\backend\backend\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerGen.dll
-C:\Users\Innocent\source\repos\Gym\backend\backend\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerUI.dll
-C:\Users\Innocent\source\repos\Gym\backend\backend\bin\Debug\net9.0\Data\gym_equipment.json

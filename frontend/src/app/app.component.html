@@ -19,11 +19,16 @@
           </span>
         </p>
       </div>
-      
-      <button class="btn btn-primary" (click)="showItemDetails(item)">
-        Show More Details
-      </button>
-      <app-card #child [item]="item"></app-card>
+
+      <div class="d-grid gap-2">
+        <button class="btn btn-primary" (click)="showItemDetails(item)">
+          Show More Details
+        </button>
+        <app-card #child [item]="item"></app-card>
+        <button class="btn btn-success" (click)="addItemToCart(item)">
+          Add to Cart
+        </button>
+      </div>
   </div>
 </div>
 
