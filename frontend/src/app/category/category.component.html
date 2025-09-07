@@ -1,1 +1,29 @@
-<p>category works!</p>
+<div class="card-container">
+  <div class="card" *ngFor="let item of items">
+      <img 
+        [src]="'assets/images/' + item.id + '.PNG'" 
+        class="card-img" 
+        alt="{{ item.name }}" 
+      >
+      <div class="card-body">
+        <h5 class="card-title">{{ item.name }}</h5>
+        <p class="card-price"><strong>Price:</strong> R{{ item.price.toFixed(2) }}</p>
+        <p class="card-quantity">
+          <strong>Quantity:</strong>
+          <span [ngClass]="{'text-danger': item.quantity < 5}">
+            {{ item.quantity }}
+          </span>
+        </p>
+      </div>
+
+      <div class="d-grid gap-2">
+        <button class="btn btn-primary" (click)="showItemDetails(item)">
+          Show More Details
+        </button>
+        <app-card #child [item]="item"></app-card>
+        <button class="btn btn-success" (click)="addItemToCart(item)">
+          Add to Cart
+        </button>
+      </div>
+  </div>
+</div>
