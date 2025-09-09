@@ -1,1 +1,26 @@
-<p>about works!</p>
+<div class="about-container">
+  <h2>{{ name }}</h2>
+  <h3>{{ title }}</h3>
+
+  <p>{{ description }}</p>
+
+  <h4>What I am focusing on:</h4>
+  <ul>
+    <li *ngFor="let skill of skills">{{ skill }}</li>
+  </ul>
+
+  <h4>Technologies I am focusing on:</h4>
+  <ul>
+    <li *ngFor="let technology of technologies">{{ technology }}</li>
+  </ul>
+
+  <h4>What I do when I am not coding:</h4>
+  <ul>
+    <li *ngFor="let hobby of hobbies">{{ hobby }}</li>
+  </ul>
+
+  <p class="footer-text">
+    My ultimate goal is to grow as an engineer while creating something meaningful.
+    Let’s connect and share ideas about software development!
+  </p>
+</div>
