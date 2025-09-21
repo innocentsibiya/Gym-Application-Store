@@ -10,6 +10,7 @@ backend/bin/
 backend/obj/
 backend/*.user
 backend/*.suo
+backend/backend/Data
 
 # Visual Studio files
 .vscode/

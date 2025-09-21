@@ -3,27 +3,40 @@
 
   <!-- Display items in cart -->
   <div *ngIf="cartItems.length > 0; else emptyCart">
-    <ul>
-      <li *ngFor="let item of cartItems">
-        <div class="cart-item">
-          <img
-            [src]="'assets/images/' + item.id + '.PNG'"
-            alt="{{ item.name }}"
-            class="cart-item-image"
-          />
-          <div class="cart-item-details">
-            <p><strong>{{ item.name }}</strong></p>
-            <p>Price: R{{ item.price.toFixed(2) }}</p>
-            <p>Quantity: {{ item.quantity }}</p>
-            <button (click)="removeFromCart(item.id)">Remove</button>
-          </div>
+    <div
+      *ngFor="let item of cartItems; trackBy: trackById"
+      class="cart-item"
+    >
+      <img
+        [src]="'assets/images/' + item.id + '.PNG'"
+        [alt]="item.name"
+        class="cart-item-image"
+      />
+
+      <div class="cart-item-details">
+        <p class="item-name"><strong>{{ item.name }}</strong></p>
+        <p>Price: {{ item.price | currency:'R':'symbol':'1.2-2' }}</p>
+        <p>Quantity: {{ item.quantity }}</p>
+
+        <p class="subtotal"><strong>Subtotal:</strong> {{ item.price * item.quantity | currency:'R':'symbol':'1.2-2' }}</p>
+
+        <div class="actions">
+          <button (click)="increaseQuantity(item)">+</button>
+          <button (click)="decreaseQuantity(item)">-</button>
+          <button class="remove" (click)="removeFromCart(item.id)">
+            Remove
+          </button>
         </div>
-      </li>
-    </ul>
+      </div>
+    </div>
 
     <!-- Total Price -->
     <div class="cart-summary">
-      <p><strong>Total Price: </strong>R{{ getTotalPrice().toFixed(2) }}</p>
+      <p>
+        <strong>Total: </strong>
+        {{ getTotalPrice() | currency:'R':'symbol':'1.2-2' }}
+      </p>
+      <button class="checkout-btn">Proceed to Checkout</button>
     </div>
   </div>
 

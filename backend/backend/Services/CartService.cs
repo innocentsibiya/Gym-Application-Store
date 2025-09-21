@@ -61,7 +61,7 @@ namespace backend.Services
             var existingItem = cartItems.FirstOrDefault(item => item.Id == newItem.Id);
             if (existingItem != null)
             {
-                existingItem.Quantity += newItem.Quantity;  // Update quantity if the item exists
+                existingItem.Quantity = newItem.Quantity;  // Update quantity if the item exists
             }
             else
             {

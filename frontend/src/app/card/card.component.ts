@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { GymItem, GymItemService } from '../services/gym-item-service.service';
+import { GymItemService } from '../services/gym-item-service.service';
+import { GymItem } from '../interface/GymItem';
 
 @Component({
   selector: 'app-card',
@@ -7,16 +8,14 @@ import { GymItem, GymItemService } from '../services/gym-item-service.service';
   styleUrls: ['./card.component.less']
 })
 export class CardComponent {
-  @Input() item!: GymItem;  // Accept gym item data from parent
-  isModalOpen: boolean = false;  // Flag to manage modal visibility
+  @Input() item!: GymItem;  
+  isModalOpen: boolean = false;  
 
-  // Method to open the modal
   openModal(item: GymItem): void {
     this.item = item;
     this.isModalOpen = true;
   }
 
-  // Method to close the modal
   closeModal(): void {
     this.isModalOpen = false;
   }

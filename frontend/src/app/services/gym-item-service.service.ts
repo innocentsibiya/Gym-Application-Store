@@ -1,17 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-
-export interface GymItem {
-  id: number;
-  name: string;
-  price: number;
-  quantity: number;
-}
+import { GymItem } from '../interface/GymItem';
 
 @Injectable({
   providedIn: 'root'
 })
+
 export class GymItemService {
   private apiUrl = 'http://localhost:5074/api/GymItems';
 
