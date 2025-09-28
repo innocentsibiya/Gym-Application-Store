@@ -5,12 +5,19 @@ using Newtonsoft.Json.Linq;
 using System.Linq;
 using System.IO;
 using System.Collections.Generic;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace backend.Services
 {
     public class CartService : ICartService
     {
         private string _filePath = "Data/orders.json";  // Path to the JSON file where cart items are saved
+        private readonly IMemoryCache _cache;
+
+        public CartService(IMemoryCache cache)
+        {
+            _cache = cache;
+        }
 
         // Helper method to read cart data from the JSON file
         public List<CartItem> ReadCartFromFile()
@@ -49,13 +56,18 @@ namespace backend.Services
         // Get the cart items
         public List<CartItem> GetCart()
         {
-            return ReadCartFromFile();
+            if(!_cache.TryGetValue("CartCache", out List<CartItem> cart))
+            {
+                cart = ReadCartFromFile();
+                _cache.Set("CartCache",cart,TimeSpan.FromMinutes(15));
+            }
+            return cart ?? [];
         }
 
         // Add an item to the cart
         public List<CartItem> AddToCart(CartItem newItem)
         {
-            var cartItems = ReadCartFromFile();
+            var cartItems = GetCart();
 
             // Check if the item is already in the cart
             var existingItem = cartItems.FirstOrDefault(item => item.Id == newItem.Id);
@@ -69,13 +81,15 @@ namespace backend.Services
             }
 
             WriteCartToFile(cartItems);  // Save the updated cart to file
+            //save to the cache
+            _cache.Set("CartCache", cartItems, TimeSpan.FromMinutes(15));
             return cartItems;
         }
 
         // Remove an item from the cart
         public List<CartItem> RemoveFromCart(int id)
         {
-            var cartItems = ReadCartFromFile();
+            var cartItems = GetCart();
             var itemToRemove = cartItems.FirstOrDefault(item => item.Id == id);
 
             if (itemToRemove != null)
@@ -83,6 +97,8 @@ namespace backend.Services
                 cartItems.Remove(itemToRemove);
                 WriteCartToFile(cartItems);  // Save the updated cart to file
             }
+            //save to the cache
+            _cache.Set("CartCache", cartItems, TimeSpan.FromMinutes(15));
 
             return cartItems;
         }
