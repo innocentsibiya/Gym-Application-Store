@@ -1,5 +1,7 @@
+using backend.Data;
 using backend.Interfaces;
 using backend.Services;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +30,11 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddMemoryCache();
+
+builder.Services.AddDbContext<GymStoreContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("ConnectionString"))
+    );
+
 var app = builder.Build();
 app.UseCors("AllowAll");
 // Configure the HTTP request pipeline.

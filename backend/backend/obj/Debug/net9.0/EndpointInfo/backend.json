@@ -18,7 +18,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/CartItem"
+                    "$ref": "#/components/schemas/CartItems"
                   }
                 }
               },
@@ -26,7 +26,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/CartItem"
+                    "$ref": "#/components/schemas/CartItems"
                   }
                 }
               },
@@ -34,7 +34,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/CartItem"
+                    "$ref": "#/components/schemas/CartItems"
                   }
                 }
               }
@@ -50,17 +50,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CartItem"
+                "$ref": "#/components/schemas/CartItems"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/CartItem"
+                "$ref": "#/components/schemas/CartItems"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/CartItem"
+                "$ref": "#/components/schemas/CartItems"
               }
             }
           }
@@ -270,7 +270,7 @@
   },
   "components": {
     "schemas": {
-      "CartItem": {
+      "CartItems": {
         "type": "object",
         "properties": {
           "id": {

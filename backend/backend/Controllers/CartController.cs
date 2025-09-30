@@ -21,7 +21,7 @@ namespace backend.Controllers
 
         // Get the cart items
         [HttpGet]
-        public ActionResult<List<CartItem>> GetCart()
+        public ActionResult<List<CartItems>> GetCart()
         {
             var cartItems = _cartService.GetCart();
             return Ok(cartItems);
@@ -29,7 +29,7 @@ namespace backend.Controllers
 
         // Add an item to the cart
         [HttpPost]
-        public ActionResult AddToCart([FromBody] CartItem newItem)
+        public ActionResult AddToCart([FromBody] CartItems newItem)
         {
             var updatedCart = _cartService.AddToCart(newItem);
             return Ok(updatedCart);

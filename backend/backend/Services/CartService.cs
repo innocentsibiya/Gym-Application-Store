@@ -20,11 +20,11 @@ namespace backend.Services
         }
 
         // Helper method to read cart data from the JSON file
-        public List<CartItem> ReadCartFromFile()
+        public List<CartItems> ReadCartFromFile()
         {
             if (!File.Exists(_filePath))
             {
-                return new List<CartItem>();  // If file doesn't exist, return an empty list
+                return new List<CartItems>();  // If file doesn't exist, return an empty list
             }
 
             var json = File.ReadAllText(_filePath);
@@ -34,29 +34,29 @@ namespace backend.Services
             if (jToken.Type == JTokenType.Array)
             {
                 // Deserialize as List<CartItem>
-                return jToken.ToObject<List<CartItem>>() ?? new List<CartItem>();
+                return jToken.ToObject<List<CartItems>>() ?? new List<CartItems>();
             }
             else if (jToken.Type == JTokenType.Object)
             {
                 // If it's a single CartItem, wrap it in a list
-                var singleItem = jToken.ToObject<CartItem>();
-                return new List<CartItem> { singleItem };
+                var singleItem = jToken.ToObject<CartItems>();
+                return new List<CartItems> { singleItem };
             }
 
-            return new List<CartItem>();  // Fallback if the JSON is not valid
+            return new List<CartItems>();  // Fallback if the JSON is not valid
         }
 
         // Helper method to write cart data to the JSON file
-        public void WriteCartToFile(List<CartItem> cartItems)
+        public void WriteCartToFile(List<CartItems> cartItems)
         {
             var json = JsonConvert.SerializeObject(cartItems, Formatting.Indented);
             File.WriteAllText(_filePath, json);
         }
 
         // Get the cart items
-        public List<CartItem> GetCart()
+        public List<CartItems> GetCart()
         {
-            if(!_cache.TryGetValue("CartCache", out List<CartItem> cart))
+            if(!_cache.TryGetValue("CartCache", out List<CartItems> cart))
             {
                 cart = ReadCartFromFile();
                 _cache.Set("CartCache",cart,TimeSpan.FromMinutes(15));
@@ -65,7 +65,7 @@ namespace backend.Services
         }
 
         // Add an item to the cart
-        public List<CartItem> AddToCart(CartItem newItem)
+        public List<CartItems> AddToCart(CartItems newItem)
         {
             var cartItems = GetCart();
 
@@ -87,7 +87,7 @@ namespace backend.Services
         }
 
         // Remove an item from the cart
-        public List<CartItem> RemoveFromCart(int id)
+        public List<CartItems> RemoveFromCart(int id)
         {
             var cartItems = GetCart();
             var itemToRemove = cartItems.FirstOrDefault(item => item.Id == id);
