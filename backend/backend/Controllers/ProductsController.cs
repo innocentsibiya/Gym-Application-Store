@@ -17,6 +17,10 @@ namespace backend.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllProducts() { 
             var products = await _productService.GetProductsAsync();
+
+            if (products == null || !products.Any())
+                return NotFound("No products available.");
+
             return Ok(products);
         }
 
@@ -24,7 +28,7 @@ namespace backend.Controllers
         public async Task<IActionResult> GetProductsById(int id)
         {
             var product = await _productService.GetProductByIdAsync(id);
-            return product == null ? NotFound() : Ok(product);
+            return product == null ? NotFound("No products available.") : Ok(product);
         }
     }
 }

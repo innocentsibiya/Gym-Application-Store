@@ -163,10 +163,10 @@ C:\Users\Innocent\source\repos\Gym\backend\backend\obj\Debug\net9.0\staticwebass
 C:\Users\Innocent\source\repos\Gym\backend\backend\obj\Debug\net9.0\staticwebassets.build.json.cache
 C:\Users\Innocent\source\repos\Gym\backend\backend\obj\Debug\net9.0\staticwebassets.development.json
 C:\Users\Innocent\source\repos\Gym\backend\backend\obj\Debug\net9.0\staticwebassets.build.endpoints.json
+C:\Users\Innocent\source\repos\Gym\backend\backend\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt
 C:\Users\Innocent\source\repos\Gym\backend\backend\obj\Debug\net9.0\backend.csproj.Up2Date
 C:\Users\Innocent\source\repos\Gym\backend\backend\obj\Debug\net9.0\backend.dll
 C:\Users\Innocent\source\repos\Gym\backend\backend\obj\Debug\net9.0\refint\backend.dll
 C:\Users\Innocent\source\repos\Gym\backend\backend\obj\Debug\net9.0\backend.pdb
 C:\Users\Innocent\source\repos\Gym\backend\backend\obj\Debug\net9.0\backend.genruntimeconfig.cache
 C:\Users\Innocent\source\repos\Gym\backend\backend\obj\Debug\net9.0\ref\backend.dll
-C:\Users\Innocent\source\repos\Gym\backend\backend\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt

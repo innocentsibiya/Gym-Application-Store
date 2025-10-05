@@ -1,106 +1,85 @@
-﻿using backend.Interfaces;
+﻿using backend.Data;
+using backend.Interfaces;
 using backend.Models;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System.Linq;
-using System.IO;
-using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace backend.Services
 {
     public class CartService : ICartService
     {
-        private string _filePath = "Data/orders.json";  // Path to the JSON file where cart items are saved
+        private readonly GymStoreContext _context;
         private readonly IMemoryCache _cache;
+        private const string CartCacheKeyPrefix = "CartCache";
 
-        public CartService(IMemoryCache cache)
+        public CartService(GymStoreContext context, IMemoryCache cache)
         {
+            _context = context;
             _cache = cache;
         }
 
-        // Helper method to read cart data from the JSON file
-        public List<CartItems> ReadCartFromFile()
+        public async Task<Cart> GetCartAsync(int userId)
         {
-            if (!File.Exists(_filePath))
+            var cacheKey = $"{CartCacheKeyPrefix}{userId}";
+
+            if (!_cache.TryGetValue(cacheKey, out Cart? cart))
             {
-                return new List<CartItems>();  // If file doesn't exist, return an empty list
+                cart = await _context.Carts
+                    .Include(c => c.Items)
+                    .ThenInclude(i => i.Product)
+                    .FirstOrDefaultAsync(c => c.UserId == userId);
+
+                if (cart == null)
+                {
+                    cart = new Cart { UserId = userId, Items = new List<CartItem>() };
+                    _context.Carts.Add(cart);
+                    await _context.SaveChangesAsync();
+                }
+
+                _cache.Set(cacheKey, cart, TimeSpan.FromMinutes(15));
             }
 
-            var json = File.ReadAllText(_filePath);
-            var jToken = JToken.Parse(json);
-
-            // Check if JSON is an array or object
-            if (jToken.Type == JTokenType.Array)
-            {
-                // Deserialize as List<CartItem>
-                return jToken.ToObject<List<CartItems>>() ?? new List<CartItems>();
-            }
-            else if (jToken.Type == JTokenType.Object)
-            {
-                // If it's a single CartItem, wrap it in a list
-                var singleItem = jToken.ToObject<CartItems>();
-                return new List<CartItems> { singleItem };
-            }
-
-            return new List<CartItems>();  // Fallback if the JSON is not valid
+            return cart!;
         }
 
-        // Helper method to write cart data to the JSON file
-        public void WriteCartToFile(List<CartItems> cartItems)
+        public async Task AddToCartAsync(int userId, int productId, int quantity)
         {
-            var json = JsonConvert.SerializeObject(cartItems, Formatting.Indented);
-            File.WriteAllText(_filePath, json);
-        }
+            var cart = await GetCartAsync(userId);
 
-        // Get the cart items
-        public List<CartItems> GetCart()
-        {
-            if(!_cache.TryGetValue("CartCache", out List<CartItems> cart))
-            {
-                cart = ReadCartFromFile();
-                _cache.Set("CartCache",cart,TimeSpan.FromMinutes(15));
-            }
-            return cart ?? [];
-        }
-
-        // Add an item to the cart
-        public List<CartItems> AddToCart(CartItems newItem)
-        {
-            var cartItems = GetCart();
-
-            // Check if the item is already in the cart
-            var existingItem = cartItems.FirstOrDefault(item => item.Id == newItem.Id);
+            var existingItem = cart.Items.FirstOrDefault(i => i.ProductId == productId);
             if (existingItem != null)
             {
-                existingItem.Quantity = newItem.Quantity;  // Update quantity if the item exists
+                existingItem.Quantity = quantity;
             }
             else
             {
-                cartItems.Add(newItem);  // Add new item to the cart
+                cart.Items.Add(new CartItem
+                {
+                    ProductId = productId,
+                    Quantity = quantity,
+                    CartId = cart.Id
+                });
             }
 
-            WriteCartToFile(cartItems);  // Save the updated cart to file
-            //save to the cache
-            _cache.Set("CartCache", cartItems, TimeSpan.FromMinutes(15));
-            return cartItems;
+            _context.Update(cart);
+            await _context.SaveChangesAsync();
+
+            _cache.Remove($"{CartCacheKeyPrefix}{userId}");
         }
 
-        // Remove an item from the cart
-        public List<CartItems> RemoveFromCart(int id)
+        public async Task RemoveFromCartAsync(int userId, int productId)
         {
-            var cartItems = GetCart();
-            var itemToRemove = cartItems.FirstOrDefault(item => item.Id == id);
+            var cart = await GetCartAsync(userId);
 
-            if (itemToRemove != null)
+            var item = cart.Items.FirstOrDefault(i => i.ProductId == productId);
+            if (item != null)
             {
-                cartItems.Remove(itemToRemove);
-                WriteCartToFile(cartItems);  // Save the updated cart to file
+                cart.Items.Remove(item);
+                _context.CartItems.Remove(item);
+                await _context.SaveChangesAsync();
             }
-            //save to the cache
-            _cache.Set("CartCache", cartItems, TimeSpan.FromMinutes(15));
 
-            return cartItems;
+            _cache.Remove($"{CartCacheKeyPrefix}{userId}");
         }
     }
 }

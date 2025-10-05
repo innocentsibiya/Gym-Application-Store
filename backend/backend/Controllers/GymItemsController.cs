@@ -1,6 +1,5 @@
 ﻿using backend.Interfaces;
 using backend.Models;
-using backend.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GymApi.Controllers

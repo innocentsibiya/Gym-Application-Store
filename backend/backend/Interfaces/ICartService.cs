@@ -4,13 +4,8 @@ namespace backend.Interfaces
 {
     public interface ICartService
     {
-        // Get the cart items
-        List<CartItems> GetCart();
-
-        // Add an item to the cart
-        List<CartItems> AddToCart(CartItems newItem);
-
-        // Remove an item from the cart
-        List<CartItems> RemoveFromCart(int id);
+        Task<Cart> GetCartAsync(int userId);
+        Task AddToCartAsync(int userId, int productId, int quantity);
+        Task RemoveFromCartAsync(int userId, int productId);
     }
 }

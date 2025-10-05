@@ -1,50 +1,38 @@
 ﻿using backend.Interfaces;
-using backend.Models;
-using backend.Services;
-using Microsoft.AspNetCore.Cors.Infrastructure;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     public class CartController : ControllerBase
     {
         private readonly ICartService _cartService;
 
-        // Inject the CartService into the controller
         public CartController(ICartService cartService)
         {
             _cartService = cartService;
         }
 
-        // Get the cart items
-        [HttpGet]
-        public ActionResult<List<CartItems>> GetCart()
+        [HttpGet("{userId}")]
+        public async Task<IActionResult> GetCart(int userId)
         {
-            var cartItems = _cartService.GetCart();
-            return Ok(cartItems);
+            var cart = await _cartService.GetCartAsync(userId);
+            return Ok(cart);
         }
 
-        // Add an item to the cart
-        [HttpPost]
-        public ActionResult AddToCart([FromBody] CartItems newItem)
+        [HttpPost("{userId}/add/{productId}")]
+        public async Task<IActionResult> AddToCart(int userId, int productId, int quantity)
         {
-            var updatedCart = _cartService.AddToCart(newItem);
-            return Ok(updatedCart);
+            await _cartService.AddToCartAsync(userId, productId, quantity);
+            return Ok(new { message = "Product added to cart" });
         }
 
-        // Remove an item from the cart
-        [HttpDelete("{id}")]
-        public ActionResult RemoveFromCart(int id)
+        [HttpDelete("{userId}/remove/{productId}")]
+        public async Task<IActionResult> RemoveFromCart(int userId, int productId)
         {
-            var updatedCart = _cartService.RemoveFromCart(id);
-            if (updatedCart == null)
-            {
-                return NotFound("Item not found in cart");
-            }
-            return Ok(updatedCart);
+            await _cartService.RemoveFromCartAsync(userId, productId);
+            return Ok(new { message = "Product removed from cart" });
         }
     }
 }
