@@ -20,6 +20,8 @@ backend/backend/Data
 .DS_Store
 Thumbs.db
 
-appsettings.Development.json
+backend/backend/appsettings.Development.json
+backend/backend/appsettings.json
 appsettings.json
+appsettings.Development.json
 *.secrets.json

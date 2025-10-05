@@ -169,3 +169,4 @@ C:\Users\Innocent\source\repos\Gym\backend\backend\obj\Debug\net9.0\refint\backe
 C:\Users\Innocent\source\repos\Gym\backend\backend\obj\Debug\net9.0\backend.pdb
 C:\Users\Innocent\source\repos\Gym\backend\backend\obj\Debug\net9.0\backend.genruntimeconfig.cache
 C:\Users\Innocent\source\repos\Gym\backend\backend\obj\Debug\net9.0\ref\backend.dll
+C:\Users\Innocent\source\repos\Gym\backend\backend\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt
