@@ -1,17 +1,16 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { GymItemService } from '../services/gym-item-service.service';
-import { GymItem } from '../interface/GymItem';
+import { Product } from '../interface/Product';
 
 @Component({
   selector: 'app-card',
   templateUrl: './card.component.html',
   styleUrls: ['./card.component.less']
 })
-export class CardComponent {
-  @Input() item!: GymItem;  
+export class CardComponent {  
+  @Input() item!: Product;
   isModalOpen: boolean = false;  
 
-  openModal(item: GymItem): void {
+  openModal(item: Product): void {
     this.item = item;
     this.isModalOpen = true;
   }

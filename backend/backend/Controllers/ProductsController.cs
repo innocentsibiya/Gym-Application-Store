@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace backend.Controllers
 {
     [ApiController]
-    [Route("api/controller")]
+    [Route("api/[controller]")]
     public class ProductsController : ControllerBase
     {
         private readonly IProductService _productService;
@@ -25,7 +25,7 @@ namespace backend.Controllers
         }
 
         [HttpGet("id")]
-        public async Task<IActionResult> GetProductsById(int id)
+        public async Task<IActionResult> GetProductsById(long id)
         {
             var product = await _productService.GetProductByIdAsync(id);
             return product == null ? NotFound("No products available.") : Ok(product);

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CartService } from '../services/cart.service';
-import { CartItem } from '../interface/CartItem';
+import { Product } from '../interface/Product';
 
 
 @Component({
@@ -9,7 +9,7 @@ import { CartItem } from '../interface/CartItem';
   styleUrls: ['./cart.component.less']
 })
 export class CartComponent {
-  cartItems: CartItem[] = [];
+  cartItems: Product[] = [];
 
   constructor(private cartService: CartService) {}
 
@@ -25,12 +25,12 @@ export class CartComponent {
 
   getTotalPrice(): number {
     return this.cartItems.reduce(
-      (total, item) => total + item.price * item.quantity,
+      (total, item) => total + item.price * item.stockQuantity,
       0
     );
   }
 
-  trackById(index: number, item: CartItem): number {
+  trackById(index: number, item: Product): number {
     return item.id;
   }
 
@@ -40,13 +40,13 @@ export class CartComponent {
     });
   }
 
-  increaseQuantity(item: CartItem): void {
-    item.quantity++;
+  increaseQuantity(item: Product): void {
+    item.stockQuantity++;
   }
 
-  decreaseQuantity(item: CartItem): void {
-    if (item.quantity > 1) {
-      item.quantity--;
+  decreaseQuantity(item: Product): void {
+    if (item.stockQuantity > 1) {
+      item.stockQuantity--;
     } else {
       this.removeFromCart(item.id);
     }

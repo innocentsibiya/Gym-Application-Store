@@ -8,7 +8,7 @@
       class="cart-item"
     >
       <img
-        [src]="'assets/images/' + item.id + '.PNG'"
+        [src]="'assets/' + item.imageUrls[0]"
         [alt]="item.name"
         class="cart-item-image"
       />
@@ -16,9 +16,9 @@
       <div class="cart-item-details">
         <p class="item-name"><strong>{{ item.name }}</strong></p>
         <p>Price: {{ item.price | currency:'R':'symbol':'1.2-2' }}</p>
-        <p>Quantity: {{ item.quantity }}</p>
+        <p>Quantity: {{ item.stockQuantity }}</p>
 
-        <p class="subtotal"><strong>Subtotal:</strong> {{ item.price * item.quantity | currency:'R':'symbol':'1.2-2' }}</p>
+        <p class="subtotal"><strong>Subtotal:</strong> {{ item.price * item.stockQuantity | currency:'R':'symbol':'1.2-2' }}</p>
 
         <div class="actions">
           <button (click)="increaseQuantity(item)">+</button>

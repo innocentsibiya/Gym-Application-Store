@@ -1,7 +1,7 @@
 <div class="card-container">
-  <div class="card" *ngFor="let item of items">
+   <div class="card" *ngFor="let item of items">
       <img 
-        [src]="'assets/images/' + item.id + '.PNG'" 
+        [src]="'assets/' + item.imageUrls[0]"
         class="card-img" 
         alt="{{ item.name }}" 
       >
@@ -10,8 +10,8 @@
         <p class="card-price"><strong>Price:</strong> R{{ item.price.toFixed(2) }}</p>
         <p class="card-quantity">
           <strong>Quantity:</strong>
-          <span [ngClass]="{'text-danger': item.quantity < 5}">
-            {{ item.quantity }}
+          <span [ngClass]="{'text-danger': item.stockQuantity < 5}">
+            {{ item.stockQuantity }}
           </span>
         </p>
       </div>

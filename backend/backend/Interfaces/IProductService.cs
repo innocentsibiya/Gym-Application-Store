@@ -1,10 +1,11 @@
-﻿using backend.Models;
+﻿using backend.DTO;
+using backend.Models;
 
 namespace backend.Interfaces
 {
     public interface IProductService
     {
-        Task<IEnumerable<Product>> GetProductsAsync();
-        Task<Product?> GetProductByIdAsync(int id);
+        Task<IEnumerable<ProductDto>> GetProductsAsync();
+        Task<ProductDto?> GetProductByIdAsync(long id);
     }
 }

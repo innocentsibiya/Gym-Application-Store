@@ -3,13 +3,13 @@
     <button class="close-btn" (click)="closeModal()">X</button>
     <h2>Gym Item Details</h2>
     <img
-      [src]="'assets/images/' + item.id + '.PNG'"
+      [src]="'assets/' + item.imageUrls[0]"
       alt="{{ item.name }}"
       class="detail-image"
     />
     <p><strong>ID:</strong> {{ item.id }}</p>
     <p><strong>Name:</strong> {{ item.name }}</p>
     <p><strong>Price:</strong> R{{ item.price.toFixed(2) }}</p>
-    <p><strong>Quantity:</strong> {{ item.quantity }}</p>
+    <p><strong>Quantity:</strong> {{ item.stockQuantity }}</p>
   </div>
 </div>

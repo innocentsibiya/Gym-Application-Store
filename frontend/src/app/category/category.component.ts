@@ -1,10 +1,9 @@
 import { Component, ViewChild } from '@angular/core';
-import { GymItemService } from '../services/gym-item-service.service';
 import { CardComponent } from '../card/card.component';
 import { CartComponent } from '../cart/cart.component';
 import { CartService } from '../services/cart.service';
-import { CartItem } from '../interface/CartItem';
-import { GymItem } from '../interface/GymItem';
+import { ProductService } from '../services/product.service';
+import { Product } from '../interface/Product';
 
 @Component({
   selector: 'app-category',
@@ -12,24 +11,25 @@ import { GymItem } from '../interface/GymItem';
   styleUrls: ['./category.component.less']
 })
 export class CategoryComponent {
-  items: GymItem[] = [];
-  cartItems: CartItem[] = [];
+  cartItems: Product[] = [];
+  items: Product[] = [];
   @ViewChild(CardComponent) childComponent!: CardComponent;
   @ViewChild(CartComponent) cartComponent!: CartComponent;
 
-  constructor(private gymService: GymItemService,private cartService: CartService) {}
+  constructor(private productService: ProductService, private cartService: CartService) {}
 
   ngOnInit(): void {
-    this.gymService.getAll().subscribe(data => {
+
+    this.productService.getAllProducts().subscribe(data => {
       this.items = data;
     });
   }
 
-  showItemDetails(item: GymItem): void {
+  showItemDetails(item: Product): void {
     this.childComponent.openModal(item);
   }
 
-  addItemToCart(item: CartItem): void {
+  addItemToCart(item: Product): void {
     this.cartService.addToCart(item).subscribe(cartItems => {
       this.cartItems = cartItems;
     });
