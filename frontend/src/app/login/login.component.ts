@@ -1,39 +1,23 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
+import { Component } from '@angular/core';
+import { AuthService } from '../services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.less'] 
+  templateUrl: './login.component.html'
 })
-export class LoginComponent implements OnInit {
-  loginForm!: FormGroup;
-  submitted = false;
+export class LoginComponent {
+  email: string = '';
+  password: string = '';
+  error: string = '';
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private authService: AuthService, private router: Router) {}
 
-  ngOnInit(): void {
-    this.loginForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required]
-    });
-  }
-
-  get email(): AbstractControl {
-    return this.loginForm.get('email')!;
-  }
-
-  get password(): AbstractControl {
-    return this.loginForm.get('password')!;
-  }
-
-  onSubmit(): void {
-    this.submitted = true;
-
-    if (this.loginForm.invalid) {
-      return;
-    }
-
-    alert('Login Successful!\n\n' + JSON.stringify(this.loginForm.value, null, 2));
+  login() {
+    this.authService.login({ email: this.email, password: this.password })
+      .subscribe({
+        next: res => this.router.navigate(['/dashboard']), // change as needed
+        error: err => this.error = err.error?.message || 'Login failed'
+      });
   }
 }

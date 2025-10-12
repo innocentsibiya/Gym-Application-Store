@@ -1,11 +1,13 @@
-﻿using backend.Models;
+﻿using backend.DTO;
 
 namespace backend.Interfaces
 {
+    using backend.Models;
+    using System.Threading.Tasks;
+
     public interface IAuthService
     {
-        string GenerateJwtToken(User user);
-        string HashPassword(string password);
-        bool VerifyPassword(string password, string hash);
+        Task<AuthResult> RegisterAsync(RegisterDto dto);
+        Task<AuthResult> LoginAsync(LoginDto dto);
     }
 }

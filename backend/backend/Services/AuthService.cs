@@ -1,48 +1,85 @@
-﻿using backend.Interfaces;
+﻿using backend.Data;
+using backend.DTO;
+using backend.Interfaces;
 using backend.Models;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace backend.Services
+namespace backend.Services.Auth
 {
     public class AuthService : IAuthService
     {
-        private readonly IConfiguration _config;
-        public AuthService(IConfiguration config) => _config = config;
+        private readonly GymStoreContext _context;
+        private readonly ITokenService _tokenService;
 
-        public string GenerateJwtToken(User user)
+        public AuthService(GymStoreContext context, ITokenService tokenService)
         {
-            var claims = new[]
+            _context = context;
+            _tokenService = tokenService;
+        }
+
+        public async Task<AuthResult> RegisterAsync(RegisterDto dto)
+        {
+            if (await _context.Users.AnyAsync(u => u.Email == dto.Email))
+                return new AuthResult { Success = false, Message = "Email already in use." };
+
+            var passwordHash = HashPassword(dto.Password);
+
+            var user = new User
             {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Email),
-                new Claim("id", user.Id.ToString())
+                FirstName = dto.FirstName,
+                LastName = dto.LastName,
+                Email = dto.Email,
+                PasswordHash = passwordHash,
+                Role = "Customer",
+                CreatedAt = DateTime.UtcNow
             };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
 
-            var token = new JwtSecurityToken(
-                issuer: _config["Jwt:Issuer"],
-                audience: _config["Jwt:Audience"],
-                claims: claims,
-                expires: DateTime.UtcNow.AddHours(2),
-                signingCredentials: creds
-            );
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            return new AuthResult
+            {
+                Success = true,
+                Message = "User registered successfully."
+            };
         }
 
-        public string HashPassword(string password)
+        public async Task<AuthResult> LoginAsync(LoginDto dto)
         {
-            using var hmac = new HMACSHA256();
-            return Convert.ToBase64String(hmac.ComputeHash(Encoding.UTF8.GetBytes(password)));
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == dto.Email);
+
+            if (user == null)
+                return new AuthResult { Success = false, Message = "User not found." };
+
+            if (!VerifyPassword(dto.Password, user.PasswordHash))
+                return new AuthResult { Success = false, Message = "Invalid credentials." };
+
+            user.LastLoginAt = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
+
+            var token = _tokenService.GenerateToken(user);
+
+            return new AuthResult
+            {
+                Success = true,
+                Message = "Login successful.",
+                Token = token,
+                User = user
+            };
         }
 
-        public bool VerifyPassword(string password, string hash) =>
-            HashPassword(password) == hash;
+        private string HashPassword(string password)
+        {
+            using var sha256 = SHA256.Create();
+            var bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+            return Convert.ToBase64String(bytes);
+        }
+
+        private bool VerifyPassword(string password, string hash)
+        {
+            return HashPassword(password) == hash;
+        }
     }
 }
