@@ -1,29 +1,56 @@
-<div class="card-container">
-   <div class="card" *ngFor="let item of items">
-      <img 
-        [src]="'assets/' + item.imageUrls[0]"
-        class="card-img" 
-        alt="{{ item.name }}" 
-      >
-      <div class="card-body">
-        <h5 class="card-title">{{ item.name }}</h5>
-        <p class="card-price"><strong>Price:</strong> R{{ item.price.toFixed(2) }}</p>
-        <p class="card-quantity">
-          <strong>Quantity:</strong>
-          <span [ngClass]="{'text-danger': item.stockQuantity < 5}">
-            {{ item.stockQuantity }}
-          </span>
-        </p>
-      </div>
+<div class="search-sort-container mb-3 d-flex flex-wrap justify-content-between">
+  <input
+    type="text"
+    [(ngModel)]="searchTerm"
+    (input)="onSearchChange(searchTerm)"
+    placeholder="Search for a product..."
+    class="form-control mb-2"
+  />
 
-      <div class="d-grid gap-2">
-        <button class="btn btn-primary" (click)="showItemDetails(item)">
-          Show More Details
-        </button>
-        <app-card #child [item]="item"></app-card>
-        <button class="btn btn-success" (click)="addItemToCart(item)">
-          Add to Cart
-        </button>
-      </div>
+  <div class="sort-controls mb-2 d-flex align-items-center gap-2">
+    <label>Sort by:</label>
+    <select [(ngModel)]="sortField" (change)="onSortChange(sortField, sortDirection)" class="form-select">
+      <option value="name">Name</option>
+      <option value="price">Price</option>
+      <option value="stockQuantity">Quantity</option>
+    </select>
+
+    <select [(ngModel)]="sortDirection" (change)="onSortChange(sortField, sortDirection)" class="form-select">
+      <option value="asc">Ascending</option>
+      <option value="desc">Descending</option>
+    </select>
   </div>
 </div>
+
+<div class="card-container">
+  <div class="card" *ngFor="let item of items">
+    <img [src]="'assets/' + item.imageUrls[0]" class="card-img" alt="{{ item.name }}">
+    <div class="card-body">
+      <h5 class="card-title">{{ item.name }}</h5>
+      <p class="card-price"><strong>Price:</strong> R{{ item.price.toFixed(2) }}</p>
+      <p class="card-quantity">
+        <strong>Quantity:</strong>
+        <span [ngClass]="{'text-danger': item.stockQuantity < 5}">
+          {{ item.stockQuantity }}
+        </span>
+      </p>
+    </div>
+
+    <div class="d-grid gap-2">
+      <button class="btn btn-primary" (click)="showItemDetails(item)">
+        Show More Details
+      </button>
+      <button class="btn btn-success" (click)="addItemToCart(item)">
+        Add to Cart
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="pagination-controls mt-3 d-flex justify-content-center align-items-center gap-3" *ngIf="totalPages > 1">
+  <button class="btn btn-secondary" (click)="prevPage()" [disabled]="currentPage === 1">Prev</button>
+  <span>Page {{ currentPage }} of {{ totalPages }}</span>
+  <button class="btn btn-secondary" (click)="nextPage()" [disabled]="currentPage === totalPages">Next</button>
+</div>
+
+<app-card #child></app-card>

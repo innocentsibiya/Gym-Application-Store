@@ -61,8 +61,38 @@ namespace backend.Services
 
         public async Task<ProductDto?> GetProductByIdAsync(long id)
         {
-            var products = await GetProductsAsync(); 
-            return products.FirstOrDefault(p => p.Id == id);
+            var product = (await GetProductsAsync()).FirstOrDefault(p => p.Id == id);
+            if (product == null)
+                throw new KeyNotFoundException($"Product with ID {id} not found.");
+            return product;
+        }
+
+        public async Task<(IEnumerable<Product> Products, int TotalCount)> SearchAsync(string term, int page, int pageSize)
+        {
+            IQueryable<Product> query = _storeContext.Products
+                .Include(p => p.Category)
+                .Include(p => p.Images)
+                .Where(p => p.IsActive);
+
+            if (!string.IsNullOrWhiteSpace(term))
+            {
+                term = term.ToLower();
+                query = query.Where(p =>
+                    p.Name.ToLower().Contains(term) ||
+                    p.Description.ToLower().Contains(term) ||
+                    (p.Brand != null && p.Brand.ToLower().Contains(term)) ||
+                    (p.Category != null && p.Category.Name.ToLower().Contains(term))
+                );
+            }
+
+            int totalCount = await query.CountAsync();
+            var products = await query
+                .OrderBy(p => p.Name)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return (products, totalCount);
         }
     }
 }

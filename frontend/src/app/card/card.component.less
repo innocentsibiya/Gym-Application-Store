@@ -1,30 +1,23 @@
-/* Fullscreen Modal Overlay */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.7);  /* Semi-transparent background */
+  background: rgba(0, 0, 0, 0.7);  
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 999;
-  padding: 0;
-  margin-top: 5%;
+  z-index: 1000;
 }
 
-/* Fullscreen Modal Content */
 .modal-content {
   background-color: #fff;
   padding: 20px;
-  border-radius: 8px;
-  max-width: 100%;
-  max-height: 100%;
-  width: 100%;
-  height: 100%;
-  position: relative;
-  overflow-y: auto;  /* Allow scroll if content is too long */
+  border-radius: 12px;
+  max-height: 90%;
+  max-height: 90%;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
 }
 
 .close-btn {
@@ -32,11 +25,12 @@
   top: 10px;
   right: 10px;
   background: #ff3333;
-  color: white;
+  color: #fff;
   border: none;
-  padding: 10px 20px;
+  padding: 8px 14px;
   border-radius: 8px;
   cursor: pointer;
+  font-size: 1rem;
 }
 
 .close-btn:hover {
@@ -44,20 +38,26 @@
 }
 
 .detail-image {
-  width: 30%;
-  height: 30%;
-  margin-bottom: 20px;
+  width: 100%;
+  max-width: 300px;
+  height: auto;
+  margin-bottom: 15px;
   border-radius: 8px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .modal-content h2 {
-  font-size: 2em;
+  font-size: 1.8rem;
   color: #333;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
+  text-align: center;
 }
 
 .modal-content p {
-  font-size: 1.5em;
+  font-size: 1.1rem;
   color: #555;
-  line-height: 1.6;
+  line-height: 1.4;
+  margin-bottom: 8px;
 }

@@ -1,4 +1,5 @@
 ﻿using backend.Interfaces;
+using backend.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers
@@ -29,6 +30,20 @@ namespace backend.Controllers
         {
             var product = await _productService.GetProductByIdAsync(id);
             return product == null ? NotFound("No products available.") : Ok(product);
+        }
+
+        [HttpGet("search")]
+        public async Task<ActionResult> Search([FromQuery] string term,[FromQuery] int page = 1,[FromQuery] int pageSize = 9)
+        {
+            try
+            {
+                var (products, totalCount) = await _productService.SearchAsync(term, page, pageSize);
+                return Ok(new { products, totalCount, page, pageSize });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "Search failed", Details = ex.Message });
+            }
         }
     }
 }

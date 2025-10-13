@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Product } from '../interface/Product';
 
 @Component({
@@ -6,16 +6,19 @@ import { Product } from '../interface/Product';
   templateUrl: './card.component.html',
   styleUrls: ['./card.component.less']
 })
-export class CardComponent {  
+
+export class CardComponent {
   @Input() item!: Product;
-  isModalOpen: boolean = false;  
+  isModalOpen: boolean = false;
 
   openModal(item: Product): void {
     this.item = item;
     this.isModalOpen = true;
+    document.body.style.overflow = 'hidden'; 
   }
 
   closeModal(): void {
     this.isModalOpen = false;
+    document.body.style.overflow = 'auto'; 
   }
 }

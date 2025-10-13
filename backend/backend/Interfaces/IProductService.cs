@@ -7,5 +7,7 @@ namespace backend.Interfaces
     {
         Task<IEnumerable<ProductDto>> GetProductsAsync();
         Task<ProductDto?> GetProductByIdAsync(long id);
+
+        Task<(IEnumerable<Product> Products, int TotalCount)> SearchAsync(string term, int page, int pageSize);
     }
 }
