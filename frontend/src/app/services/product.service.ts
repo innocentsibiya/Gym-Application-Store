@@ -31,7 +31,7 @@ export class ProductService {
     return this.http.get<Product>(`${this.baseUrl}/${id}`);
   }
 
-    searchProducts(term: string, page: number = 1, pageSize: number = 6): Observable<any> {
+  searchProducts(term: string, page: number = 1, pageSize: number = 6): Observable<any> {
     const url = `${this.baseUrl}/search?term=${encodeURIComponent(term)}&page=${page}&pageSize=${pageSize}`;
     return this.http.get<any>(url); 
   }

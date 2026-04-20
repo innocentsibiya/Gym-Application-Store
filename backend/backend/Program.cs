@@ -68,7 +68,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddMemoryCache();
 
 builder.Services.AddDbContext<GymStoreContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("ConnectionString"))
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
     );
 
 var app = builder.Build();

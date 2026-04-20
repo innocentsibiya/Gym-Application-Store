@@ -42,7 +42,7 @@ namespace backend.Services
             return cart!;
         }
 
-        public async Task AddToCartAsync(int userId, int productId, int quantity)
+        public async Task<Cart> AddToCartAsync(int userId, int productId, int quantity)
         {
             var cart = await GetCartAsync(userId);
 
@@ -65,6 +65,7 @@ namespace backend.Services
             await _context.SaveChangesAsync();
 
             _cache.Remove($"{CartCacheKeyPrefix}{userId}");
+            return cart;
         }
 
         public async Task RemoveFromCartAsync(int userId, int productId)
@@ -78,7 +79,6 @@ namespace backend.Services
                 _context.CartItems.Remove(item);
                 await _context.SaveChangesAsync();
             }
-
             _cache.Remove($"{CartCacheKeyPrefix}{userId}");
         }
     }

@@ -1,4 +1,5 @@
 ﻿using backend.Interfaces;
+using backend.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers
@@ -24,8 +25,8 @@ namespace backend.Controllers
         [HttpPost("{userId}/add/{productId}")]
         public async Task<IActionResult> AddToCart(int userId, int productId, int quantity)
         {
-            await _cartService.AddToCartAsync(userId, productId, quantity);
-            return Ok(new { message = "Product added to cart" });
+            var cart = await _cartService.AddToCartAsync(userId, productId, quantity);
+            return Ok(cart);
         }
 
         [HttpDelete("{userId}/remove/{productId}")]
