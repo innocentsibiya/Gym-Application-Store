@@ -8,7 +8,7 @@
       class="cart-item"
     >
       <img
-        [src]="'assets/' + item.imageUrls[0]"
+        [src]="'assets/images/' + item.slug + '-main.jpg'"
         [alt]="item.name"
         class="cart-item-image"
       />
@@ -36,7 +36,7 @@
         <strong>Total: </strong>
         {{ getTotalPrice() | currency:'R':'symbol':'1.2-2' }}
       </p>
-      <button class="checkout-btn">Proceed to Checkout</button>
+      <button class="checkout-btn" (click)="proceedToCart(cartItems)" routerLink="/checkout">Proceed to Checkout</button>
     </div>
   </div>
 

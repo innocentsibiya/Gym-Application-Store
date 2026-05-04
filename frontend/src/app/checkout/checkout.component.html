@@ -1,0 +1,86 @@
+<div class="checkout-container">
+
+  <!-- STEP INDICATOR -->
+  <div class="steps">
+    <span [class.active]="step === 1">1. Delivery</span>
+    <span [class.active]="step === 2">2. Payment</span>
+    <span [class.active]="step === 3">3. Review</span>
+  </div>
+
+  <!-- STEP 1: DELIVERY -->
+  <div *ngIf="step === 1">
+
+    <h2>Select Address</h2>
+
+    <div *ngFor="let addr of addresses"
+         (click)="selectAddress(addr.Id)"
+         [class.selected]="selectedAddressId === addr.Id"
+         class="address-card">
+
+      <p>{{addr.FullName}}</p>
+      <p>{{addr.Street}}</p>
+      <p>{{addr.City}}</p>
+    </div>
+
+    <h3>Add New Address</h3>
+
+    <form [formGroup]="addressForm">
+      <input placeholder="Full Name" formControlName="fullName" />
+      <input placeholder="Address" formControlName="address" />
+      <input placeholder="City" formControlName="city" />
+      <input placeholder="Postal Code" formControlName="postalCode" />
+
+      <button type="button" (click)="addNewAddress()">Add Address</button>
+    </form>
+
+    <button (click)="nextStep()" [disabled]="!selectedAddressId">
+      Continue to Payment
+    </button>
+  </div>
+
+  <!-- STEP 2: PAYMENT -->
+  <div *ngIf="step === 2">
+
+    <h2>Payment</h2>
+
+    <form [formGroup]="paymentForm">
+
+      <label>
+        <input type="radio" value="card" formControlName="method" />
+        Card
+      </label>
+
+      <label>
+        <input type="radio" value="eft" formControlName="method" />
+        EFT
+      </label>
+
+      <div *ngIf="paymentForm.value.method === 'card'">
+        <input placeholder="Card Number" formControlName="cardNumber" />
+        <input placeholder="CVV" formControlName="cvv" />
+      </div>
+
+      <div *ngIf="paymentForm.value.method === 'eft'">
+        <input placeholder="Bank Name" formControlName="bankName" />
+        <input placeholder="Account Number" formControlName="accountNumber" />
+      </div>
+
+    </form>
+
+    <button (click)="prevStep()">Back</button>
+    <button (click)="nextStep()">Review</button>
+  </div>
+
+  <!-- STEP 3: REVIEW -->
+  <div *ngIf="step === 3">
+
+    <h2>Review Order</h2>
+
+    <p><strong>Address ID:</strong> {{selectedAddressId}}</p>
+    <p><strong>Payment:</strong> {{paymentForm.value.method}}</p>
+
+    <button (click)="prevStep()">Back</button>
+    <button (click)="placeOrder()">Place Order</button>
+  </div>
+
+</div>

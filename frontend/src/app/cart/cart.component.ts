@@ -38,6 +38,7 @@ export class CartComponent {
     this.cartService.removeFromCart(id).subscribe(items =>{
       this.cartItems = items;
     });
+    this.loadCart();
   }
 
   increaseQuantity(item: Product): void {
@@ -50,5 +51,9 @@ export class CartComponent {
     } else {
       this.removeFromCart(item.id);
     }
+  }
+
+  proceedToCart(pCartItems: Product[]) : void{
+    // Implement checkout logic here
   }
 }

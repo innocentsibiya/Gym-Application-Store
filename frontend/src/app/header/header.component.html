@@ -15,6 +15,56 @@
     class="search-container"
     placeholder="Search..."
   />
+          <div class="header-right">
+            <button class="theme-toggle" id="themeToggle">
+                <i class="fas fa-moon"></i>
+            </button>
+            <div class="notification">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge">3</span>
+            </div>
+            
+            <div class="user-menu" id="userMenu">
+              <div class="user-profile">
+                <img src="assets/images/test.PNG" alt="User Profile">
+            </div>
+            </div>
+        </div>
+  <div class="nav-right">
+    
+    <div class="profile-container" (click)="toggleDropdown()">
+      
+      <!-- User Image OR Default Icon -->
+      <img 
+        *ngIf="user.avatarUrl; else defaultIcon"
+        [src]="user.avatarUrl"
+        class="avatar"
+      />
+
+      <ng-template #defaultIcon>
+        <div class="default-icon">👤</div>
+      </ng-template>
+
+      <!-- Dropdown -->
+      <div class="dropdown" *ngIf="isDropdownOpen">
+        
+        <ng-container *ngIf="user.isAuthenticated; else guestLinks">
+          <p class="username">{{ user.name }}</p>
+          
+          <a routerLink="/profile">Profile</a>
+          <a routerLink="/settings">Settings</a>
+          <a (click)="logout()">Logout</a>
+        </ng-container>
+
+        <ng-template #guestLinks>
+          <a (click)="login()">Login</a>
+          <a routerLink="/register">Register</a>
+        </ng-template>
+
+      </div>
+    </div>
+
+  </div>
 </div>
 <div class="header-separator">
 </div>

@@ -15,4 +15,33 @@ export class HeaderComponent {
     { className: 'cart', label: 'Cart', route: '/cart' }
   ];
 
+  isDropdownOpen = false;
+
+  user = {
+    isAuthenticated: false,
+    name: '',
+    avatarUrl: '' // leave empty for default icon
+  };
+
+  toggleDropdown() {
+    this.isDropdownOpen = !this.isDropdownOpen;
+  }
+
+  login() {
+    this.user = {
+      isAuthenticated: true,
+      name: 'John Doe',
+      avatarUrl: '' // simulate no image
+    };
+  }
+
+  logout() {
+    this.user = {
+      isAuthenticated: false,
+      name: '',
+      avatarUrl: ''
+    };
+    this.isDropdownOpen = false;
+  }
+  
 }

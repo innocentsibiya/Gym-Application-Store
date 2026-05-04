@@ -25,7 +25,7 @@ export class CartService {
   /** Get cart, optionally force refresh */
   getCart(forceRefresh: boolean = false): Observable<Product[]> {
     if (!forceRefresh && this.cacheCart.length && (Date.now() - this.cartCacheTime) < this.cacheTTL) {
-      // return of(this.cacheCart);
+       return of(this.cacheCart);
     }
 
     const url = `${this.apiUrl}/${this.defaultUserId}`;
