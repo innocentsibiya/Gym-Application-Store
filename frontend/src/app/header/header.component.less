@@ -157,3 +157,46 @@
   font-weight: bold;
   border-bottom: 1px solid #ddd;
 }
+
+.profile-dropdown {
+  position: relative;
+}
+
+.dropdown-navbar {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background: #fff;
+  min-width: 180px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  border-radius: 6px;
+  padding: 8px 0;
+  z-index: 999;
+}
+
+.dropdown-navbar .nav-link {
+  padding: 8px 15px;
+  cursor: pointer;
+}
+
+.dropdown-navbar .nav-link:hover {
+  background: #f5f5f5;
+}
+
+.profile-dropdown .photo {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: inline-block;
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  margin-right: 8px;
+}
+
+.profile-dropdown .photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}

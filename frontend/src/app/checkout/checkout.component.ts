@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Address } from '../Model/Address';
 import { AddressService } from '../services/address.service';
+type CheckoutStep = 1 | 2 | 3;
+type PaymentMethod = 'card' | 'eft';
 
 @Component({
   selector: 'app-checkout',
@@ -10,13 +12,19 @@ import { AddressService } from '../services/address.service';
 })
 export class CheckoutComponent implements OnInit {
 
-  step = 1;
+  // ===== STATE =====
+  step: CheckoutStep = 1;
 
   addressForm!: FormGroup;
   paymentForm!: FormGroup;
 
   addresses: Address[] = [];
-  selectedAddressId!: number;
+  selectedAddressId: number | null = null;
+
+  cartItems = [
+    { name: 'Laptop', price: 12000, quantity: 1 },
+    { name: 'Mouse', price: 300, quantity: 2 }
+  ];
 
   constructor(
     private fb: FormBuilder,
@@ -24,8 +32,12 @@ export class CheckoutComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.initForms();
     this.loadAddresses();
+    this.handlePaymentChanges();
+  }
 
+  private initForms() {
     this.addressForm = this.fb.group({
       fullName: ['', Validators.required],
       address: ['', Validators.required],
@@ -34,7 +46,7 @@ export class CheckoutComponent implements OnInit {
     });
 
     this.paymentForm = this.fb.group({
-      method: ['card', Validators.required],
+      method: ['card' as PaymentMethod, Validators.required],
       cardNumber: [''],
       cvv: [''],
       bankName: [''],
@@ -42,9 +54,35 @@ export class CheckoutComponent implements OnInit {
     });
   }
 
+  private handlePaymentChanges() {
+    this.paymentForm.get('method')?.valueChanges.subscribe((method: PaymentMethod) => {
+      this.clearPaymentValidators();
+
+      if (method === 'card') {
+        this.paymentForm.get('cardNumber')?.setValidators([Validators.required, Validators.minLength(12)]);
+        this.paymentForm.get('cvv')?.setValidators([Validators.required, Validators.minLength(3)]);
+      }
+
+      if (method === 'eft') {
+        this.paymentForm.get('bankName')?.setValidators([Validators.required]);
+        this.paymentForm.get('accountNumber')?.setValidators([Validators.required]);
+      }
+
+      this.paymentForm.updateValueAndValidity();
+    });
+  }
+
+  private clearPaymentValidators() {
+    ['cardNumber', 'cvv', 'bankName', 'accountNumber'].forEach(field => {
+      this.paymentForm.get(field)?.clearValidators();
+      this.paymentForm.get(field)?.updateValueAndValidity({ emitEvent: false });
+    });
+  }
+
   loadAddresses() {
-    this.addressService.getAddresses().subscribe(res => {
-      this.addresses = res;
+    this.addressService.getAddresses().subscribe({
+      next: (res) => this.addresses = res,
+      error: (err) => console.error('Failed to load addresses', err)
     });
   }
 
@@ -53,29 +91,55 @@ export class CheckoutComponent implements OnInit {
   }
 
   addNewAddress() {
-    if (this.addressForm.invalid) return;
+    if (this.addressForm.invalid) {
+      this.addressForm.markAllAsTouched();
+      return;
+    }
 
     this.addressService.addAddress(this.addressForm.value)
-      .subscribe(() => {
-        this.loadAddresses();
-        this.addressForm.reset();
+      .subscribe({
+        next: () => {
+          this.loadAddresses();
+          this.addressForm.reset();
+        },
+        error: (err) => console.error('Failed to add address', err)
       });
   }
 
   nextStep() {
-    this.step++;
+    if (this.step === 1 && !this.selectedAddressId) return;
+
+    if (this.step === 2 && this.paymentForm.invalid) {
+      this.paymentForm.markAllAsTouched();
+      return;
+    }
+
+    this.step = (this.step + 1) as CheckoutStep;
   }
 
   prevStep() {
-    this.step--;
+    this.step = (this.step - 1) as CheckoutStep;
+  }
+
+  get total(): number {
+    return this.cartItems.reduce(
+      (sum, item) => sum + item.price * item.quantity,
+      0
+    );
+  }
+
+  get selectedAddress(): Address | undefined {
+    return this.addresses.find(a => a.Id === this.selectedAddressId!);
   }
 
   placeOrder() {
-    const payload = {
-      addressId: this.selectedAddressId,
-      payment: this.paymentForm.value
-    };
+    if (!this.selectedAddressId || this.paymentForm.invalid) return;
 
-    console.log('Final Order:', payload);
+    const payload = {
+      address: this.selectedAddress,
+      payment: this.paymentForm.value,
+      items: this.cartItems,
+      total: this.total
+    };
   }
 }
