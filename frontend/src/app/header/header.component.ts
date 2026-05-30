@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
+import { NavigationEnd, Router } from '@angular/router';
 
 @Component({
   selector: 'app-header',
@@ -15,33 +16,61 @@ export class HeaderComponent {
     { className: 'cart', label: 'Cart', route: '/cart' }
   ];
 
-  isDropdownOpen = false;
+ dropdownOpen = false;
+  currentTitle = '';
+  user: any = null; 
 
-  user = {
-    isAuthenticated: false,
-    name: '',
-    avatarUrl: '' // leave empty for default icon
-  };
+  constructor(private router: Router) {}
 
-  toggleDropdown() {
-    this.isDropdownOpen = !this.isDropdownOpen;
+  ngOnInit() {
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        this.currentTitle = this.getTitle(this.router.url);
+      }
+    });
+
+    this.user = {
+      name: 'User',
+      avatar: 'assets/img/anime3.png'
+    };
   }
 
-  login() {
-    this.user = {
-      isAuthenticated: true,
-      name: 'John Doe',
-      avatarUrl: '' // simulate no image
-    };
+  toggleDropdown() {
+    this.dropdownOpen = !this.dropdownOpen;
   }
 
   logout() {
-    this.user = {
-      isAuthenticated: false,
-      name: '',
-      avatarUrl: ''
-    };
-    this.isDropdownOpen = false;
+
+    localStorage.removeItem('token'); 
+    sessionStorage.clear();
+
+    this.user = null;
+    this.dropdownOpen = false;
+
+    this.router.navigate(['/login']);
   }
-  
+
+  login() {
+    this.router.navigate(['/login']);
+  }
+
+  getTitle(url: string): string {
+    const path = url.split('/').pop();
+
+    switch (path) {
+      case 'dashboard': return 'Dashboard';
+      case 'user': return 'User Profile';
+      case 'table': return 'Table List';
+      default: return 'Dashboard';
+    }
+  }
+
+  @HostListener('document:click', ['$event'])
+  onClickOutside(event: Event) {
+    const target = event.target as HTMLElement;
+
+    if (!target.closest('.profile-dropdown')) {
+      this.dropdownOpen = false;
+    }
+  }
 }

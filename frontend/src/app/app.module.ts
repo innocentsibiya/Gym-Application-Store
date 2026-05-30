@@ -19,6 +19,7 @@ import { AuthInterceptor } from './services/auth.interceptor';
 import { CheckoutComponent } from './checkout/checkout.component';
 import { CommonModule } from '@angular/common';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { UserComponent } from './user/user.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
     FooterComponent,
     CardComponent,
     CartComponent,
-    CheckoutComponent
+    CheckoutComponent,
+    UserComponent
   ],
   imports: [
     BrowserModule,
