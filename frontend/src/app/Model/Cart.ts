@@ -1,4 +1,3 @@
-import { Product } from "../interface/Product";
 import { User } from "../interface/User";
 import { CartItem } from "./CartItem";
 

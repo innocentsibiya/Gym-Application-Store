@@ -12,7 +12,7 @@ import { Product } from '../interface/Product';
 })
 export class HomeComponent {
   items: Product[] = [];
-  cartItems: Product[] = [];
+  cartItems: any = [];
   @ViewChild(CardComponent) childComponent!: CardComponent;
   @ViewChild(CartComponent) cartComponent!: CartComponent;
 

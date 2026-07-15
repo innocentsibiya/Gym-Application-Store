@@ -117,7 +117,17 @@ export class CategoryComponent implements OnInit {
 
   addItemToCart(item: Product): void {
     this.cartService.addToCart(item).subscribe({
-      next: cartItems => this.cartItems = cartItems,
+      next: cartResponse => {
+        // cartResponse might be an array of Product or an object (Cart) that contains the items array.
+        if (Array.isArray(cartResponse)) {
+          this.cartItems = cartResponse;
+        } else if (Array.isArray((cartResponse as any)?.items)) {
+          this.cartItems = (cartResponse as any).items;
+        } else {
+          // Fallback to empty array if shape is unexpected
+          this.cartItems = [];
+        }
+      },
       error: err => console.error(err)
     });
   }

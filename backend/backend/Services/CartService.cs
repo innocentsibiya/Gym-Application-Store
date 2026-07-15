@@ -1,52 +1,104 @@
 ﻿using backend.Data;
+using backend.DTO;
 using backend.Interfaces;
 using backend.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Caching.Distributed;
+using System.Text.Json;
 
 namespace backend.Services
 {
     public class CartService : ICartService
     {
         private readonly GymStoreContext _context;
-        private readonly IMemoryCache _cache;
-        private const string CartCacheKeyPrefix = "CartCache";
+        private readonly IDistributedCache _cache;
 
-        public CartService(GymStoreContext context, IMemoryCache cache)
+        private const string CartKeyPrefix = "cart:";
+
+        public CartService(
+            GymStoreContext context,
+            IDistributedCache cache)
         {
             _context = context;
             _cache = cache;
         }
 
-        public async Task<Cart> GetCartAsync(int userId)
+        private static string GetKey(long userId)
+            => $"{CartKeyPrefix}{userId}";
+
+        public async Task<CartDto> GetCartAsync(int userId)
         {
-            var cacheKey = $"{CartCacheKeyPrefix}{userId}";
+            var cacheKey = GetKey(userId);
 
-            if (!_cache.TryGetValue(cacheKey, out Cart? cart))
+            var cachedCart = await _cache.GetStringAsync(cacheKey);
+
+            if (!string.IsNullOrEmpty(cachedCart))
             {
-                cart = await _context.Carts
-                    .Include(c => c.Items)
-                    .ThenInclude(i => i.Product)
-                    .FirstOrDefaultAsync(c => c.UserId == userId);
-
-                if (cart == null)
-                {
-                    cart = new Cart { UserId = userId, Items = new List<CartItem>() };
-                    _context.Carts.Add(cart);
-                    await _context.SaveChangesAsync();
-                }
-
-                _cache.Set(cacheKey, cart, TimeSpan.FromMinutes(15));
+                return JsonSerializer.Deserialize<CartDto>(cachedCart)!;
             }
 
-            return cart!;
+            var cart = await _context.Carts
+                .AsNoTracking()
+                .Where(c => c.UserId == userId)
+                .Select(c => new CartDto
+                {
+                    Id = c.Id,
+                    UserId = c.UserId,
+                    Items = c.Items.Select(i => new CartItemDto
+                    {
+                        ProductId = i.ProductId,
+                        ProductName = i.Product.Name,
+                        ImageUrls = i.Product.Images.Select(img => img.ImageUrl).ToList(),
+                        Price = i.Product.Price,
+                        Quantity = i.Quantity
+                    }).ToList()
+                })
+                .FirstOrDefaultAsync();
+
+            if (cart == null)
+            {
+                var newCart = new Cart
+                {
+                    UserId = userId
+                };
+
+                _context.Carts.Add(newCart);
+                await _context.SaveChangesAsync();
+
+                cart = new CartDto
+                {
+                    Id = newCart.Id,
+                    UserId = userId
+                };
+            }
+
+            await SaveCartToCache(cart);
+
+            return cart;
         }
 
-        public async Task<Cart> AddToCartAsync(int userId, int productId, int quantity)
+        public async Task<CartDto> AddToCartAsync(
+            int userId,
+            int productId,
+            int quantity)
         {
-            var cart = await GetCartAsync(userId);
+            var cart = await _context.Carts
+                .Include(c => c.Items)
+                .FirstOrDefaultAsync(c => c.UserId == userId);
+
+            if (cart == null)
+            {
+                cart = new Cart
+                {
+                    UserId = userId
+                };
+
+                _context.Carts.Add(cart);
+                await _context.SaveChangesAsync();
+            }
 
             var existingItem = cart.Items.FirstOrDefault(i => i.ProductId == productId);
+
             if (existingItem != null)
             {
                 existingItem.Quantity = quantity;
@@ -56,30 +108,83 @@ namespace backend.Services
                 cart.Items.Add(new CartItem
                 {
                     ProductId = productId,
-                    Quantity = quantity,
-                    CartId = cart.Id
+                    Quantity = quantity
                 });
             }
 
-            _context.Update(cart);
             await _context.SaveChangesAsync();
 
-            _cache.Remove($"{CartCacheKeyPrefix}{userId}");
-            return cart;
+            var updatedCart = await GetCartFromDatabase(userId);
+
+            await SaveCartToCache(updatedCart);
+
+            return updatedCart;
         }
 
-        public async Task RemoveFromCartAsync(int userId, int productId)
+        public async Task<CartDto> RemoveFromCartAsync(
+            int userId,
+            int productId)
         {
-            var cart = await GetCartAsync(userId);
+            var cart = await _context.Carts
+                .Include(c => c.Items)
+                .FirstOrDefaultAsync(c =>
+                    c.UserId == userId);
 
-            var item = cart.Items.FirstOrDefault(i => i.ProductId == productId);
+            if (cart == null)
+                throw new Exception("Cart not found");
+
+            var item =
+                cart.Items.FirstOrDefault(i =>
+                    i.ProductId == productId);
+
             if (item != null)
             {
-                cart.Items.Remove(item);
                 _context.CartItems.Remove(item);
                 await _context.SaveChangesAsync();
             }
-            _cache.Remove($"{CartCacheKeyPrefix}{userId}");
+
+            var updatedCart = await GetCartFromDatabase(userId);
+
+            await SaveCartToCache(updatedCart);
+
+            return updatedCart;
+        }
+
+        private async Task<CartDto> GetCartFromDatabase(int userId)
+        {
+            return await _context.Carts
+                .AsNoTracking()
+                .Where(c => c.UserId == userId)
+                .Select(c => new CartDto
+                {
+                    Id = c.Id,
+                    UserId = c.UserId,
+                    Items = c.Items.Select(i => new CartItemDto
+                    {
+                        ProductId = i.ProductId,
+                        ProductName = i.Product.Name,
+                        Price = i.Product.Price,
+                        Quantity = i.Quantity
+                    }).ToList()
+                })
+                .FirstAsync();
+        }
+
+        private async Task SaveCartToCache(CartDto cart)
+        {
+            var options = new DistributedCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow =
+                    TimeSpan.FromHours(2),
+
+                SlidingExpiration =
+                    TimeSpan.FromMinutes(30)
+            };
+
+            await _cache.SetStringAsync(
+                GetKey(cart.UserId),
+                JsonSerializer.Serialize(cart),
+                options);
         }
     }
 }

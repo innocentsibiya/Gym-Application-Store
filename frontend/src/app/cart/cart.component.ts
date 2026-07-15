@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CartService } from '../services/cart.service';
-import { Product } from '../interface/Product';
+import { CartDto } from '../Model/CartDto';
+import { CartItemDto } from '../Model/CartItemDto';
 
 
 @Component({
@@ -9,7 +10,7 @@ import { Product } from '../interface/Product';
   styleUrls: ['./cart.component.less']
 })
 export class CartComponent {
-  cartItems: Product[] = [];
+  cartItems: CartItemDto[] = [];
 
   constructor(private cartService: CartService) {}
 
@@ -18,42 +19,42 @@ export class CartComponent {
   }
 
   loadCart(): void {
-      this.cartService.getCart().subscribe(cartItems => {
-      this.cartItems = cartItems;
+      this.cartService.loadCart().subscribe((cartItem: CartDto) => {
+      this.cartItems = cartItem.items;
+
     });
   }
 
   getTotalPrice(): number {
     return this.cartItems.reduce(
-      (total, item) => total + item.price * item.stockQuantity,
+      (total, item) => total + item.price * item.quantity,
       0
     );
   }
 
-  trackById(index: number, item: Product): number {
-    return item.id;
+  trackById(index: number, item: CartItemDto): number {
+    return item.productId;
   }
 
   removeFromCart(id: number): void {
-    this.cartService.removeFromCart(id).subscribe(items =>{
-      this.cartItems = items;
+    this.cartService.removeFromCart(id).subscribe(() => {
+      this.loadCart();
     });
-    this.loadCart();
   }
 
-  increaseQuantity(item: Product): void {
-    item.stockQuantity++;
+  increaseQuantity(item: CartItemDto): void {
+    item.quantity++;
   }
 
-  decreaseQuantity(item: Product): void {
-    if (item.stockQuantity > 1) {
-      item.stockQuantity--;
+  decreaseQuantity(item: CartItemDto): void {
+    if (item.quantity > 1) {
+      item.quantity--;
     } else {
-      this.removeFromCart(item.id);
+      this.removeFromCart(item.productId);
     }
   }
 
-  proceedToCart(pCartItems: Product[]) : void{
+  proceedToCart(pCartItems: CartItemDto[]) : void{
     // Implement checkout logic here
   }
 }
