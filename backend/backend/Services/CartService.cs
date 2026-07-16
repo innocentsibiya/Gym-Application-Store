@@ -28,7 +28,7 @@ namespace backend.Services
 
         public async Task<CartDto> GetCartAsync(int userId)
         {
-            var cacheKey = GetKey(userId);
+          var cacheKey = GetKey(userId);
 
             var cachedCart = await _cache.GetStringAsync(cacheKey);
 
@@ -163,6 +163,7 @@ namespace backend.Services
                     {
                         ProductId = i.ProductId,
                         ProductName = i.Product.Name,
+                        ImageUrls = i.Product.Images.Select(img => img.ImageUrl).ToList(),
                         Price = i.Product.Price,
                         Quantity = i.Quantity
                     }).ToList()

@@ -47,8 +47,7 @@ export class CartService {
       ? existingItem.quantity + 1
       : 1;
 
-    const url =
-      `${this.apiUrl}/${this.defaultUserId}/add/${product.id}`;
+    const url = `${this.apiUrl}/${this.defaultUserId}/add/${product.id}`;
 
     const params = new HttpParams()
       .set('quantity', quantity.toString());
@@ -70,8 +69,7 @@ export class CartService {
 
   removeFromCart(productId: number): Observable<CartDto> {
 
-    const url =
-      `${this.apiUrl}/${this.defaultUserId}/remove/${productId}`;
+    const url = `${this.apiUrl}/${this.defaultUserId}/remove/${productId}`;
 
     return this.http.delete<CartDto>(url).pipe(
       tap(cart => {

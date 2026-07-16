@@ -57,32 +57,17 @@ export class ProductService {
 
   getProductById(id: number): Observable<Product> {
 
-    const cachedProduct =
-      this.productsSubject.value.find(
-        product => product.id === id
-      );
-
+    const cachedProduct = this.productsSubject.value.find(product => product.id === id);
     if (cachedProduct) {
       return of(cachedProduct);
     }
 
-    return this.http.get<Product>(
-      `${this.baseUrl}/${id}`
-    );
+    return this.http.get<Product>(`${this.baseUrl}/${id}`);
   }
 
-  searchProducts(
-    term: string,
-    page: number = 1,
-    pageSize: number = 6
-  ): Observable<any> {
+  searchProducts(term: string, page: number = 1, pageSize: number = 6): Observable<any> {
 
-    const url =
-      `${this.baseUrl}/search` +
-      `?term=${encodeURIComponent(term)}` +
-      `&page=${page}` +
-      `&pageSize=${pageSize}`;
-
+    const url = `${this.baseUrl}/search` + `?term=${encodeURIComponent(term)}` + `&page=${page}` + `&pageSize=${pageSize}`;
     return this.http.get<any>(url);
   }
 

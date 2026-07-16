@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Address } from '../Model/Address';
 import { AddressService } from '../services/address.service';
+import { CartService } from '../services/cart.service';
+import { CartItemDto } from '../Model/CartItemDto';
+import { CartDto } from '../Model/CartDto';
 type CheckoutStep = 1 | 2 | 3;
 type PaymentMethod = 'card' | 'eft';
 
@@ -21,20 +24,21 @@ export class CheckoutComponent implements OnInit {
   addresses: Address[] = [];
   selectedAddressId: number | null = null;
 
-  cartItems = [
-    { name: 'Laptop', price: 12000, quantity: 1 },
-    { name: 'Mouse', price: 300, quantity: 2 }
-  ];
+  cartItems: CartItemDto[] = [];
 
   constructor(
     private fb: FormBuilder,
-    private addressService: AddressService
+    private addressService: AddressService,
+    private cartService: CartService
   ) {}
 
   ngOnInit(): void {
     this.initForms();
     this.loadAddresses();
     this.handlePaymentChanges();
+    this.cartService.loadCart().subscribe((cartItem: CartDto) => {
+      this.cartItems = cartItem.items;
+    });
   }
 
   private initForms() {

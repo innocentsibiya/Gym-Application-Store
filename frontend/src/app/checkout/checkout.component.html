@@ -1,6 +1,5 @@
 <div class="checkout-container">
 
-  <!-- LEFT -->
   <div>
 
     <div class="steps">
@@ -9,7 +8,6 @@
       <span [class.active]="step === 3">Review</span>
     </div>
 
-    <!-- STEP 1 -->
     <div *ngIf="step === 1" class="card">
 
       <h2>Select Address</h2>
@@ -43,7 +41,6 @@
       </button>
     </div>
 
-    <!-- STEP 2 -->
     <div *ngIf="step === 2" class="card">
 
       <h2>Payment</h2>
@@ -74,7 +71,6 @@
       <button class="primary" (click)="nextStep()">Review</button>
     </div>
 
-    <!-- STEP 3 -->
     <div *ngIf="step === 3" class="card">
       <h2>Review</h2>
 
@@ -87,12 +83,11 @@
 
   </div>
 
-  <!-- RIGHT SUMMARY -->
   <div class="summary card">
     <h3>Order Summary</h3>
 
     <div class="summary-item" *ngFor="let item of cartItems">
-      <span>{{item.name}} x{{item.quantity}}</span>
+      <span>{{item.productName}} x{{item.quantity}}</span>
       <span>R {{item.price * item.quantity}}</span>
     </div>
 
