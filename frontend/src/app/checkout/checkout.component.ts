@@ -5,7 +5,8 @@ import { AddressService } from '../services/address.service';
 import { CartService } from '../services/cart.service';
 import { CartItemDto } from '../Model/CartItemDto';
 import { CartDto } from '../Model/CartDto';
-type CheckoutStep = 1 | 2 | 3;
+import { Router } from '@angular/router';
+type CheckoutStep = 0 | 1 | 2 | 3;
 type PaymentMethod = 'card' | 'eft';
 
 @Component({
@@ -15,7 +16,6 @@ type PaymentMethod = 'card' | 'eft';
 })
 export class CheckoutComponent implements OnInit {
 
-  // ===== STATE =====
   step: CheckoutStep = 1;
 
   addressForm!: FormGroup;
@@ -23,13 +23,14 @@ export class CheckoutComponent implements OnInit {
 
   addresses: Address[] = [];
   selectedAddressId: number | null = null;
-
+  selectedAddress?: Address;
   cartItems: CartItemDto[] = [];
 
   constructor(
     private fb: FormBuilder,
     private addressService: AddressService,
-    private cartService: CartService
+    private cartService: CartService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -42,13 +43,6 @@ export class CheckoutComponent implements OnInit {
   }
 
   private initForms() {
-    this.addressForm = this.fb.group({
-      fullName: ['', Validators.required],
-      address: ['', Validators.required],
-      city: ['', Validators.required],
-      postalCode: ['', Validators.required]
-    });
-
     this.paymentForm = this.fb.group({
       method: ['card' as PaymentMethod, Validators.required],
       cardNumber: [''],
@@ -85,7 +79,10 @@ export class CheckoutComponent implements OnInit {
 
   loadAddresses() {
     this.addressService.getAddresses().subscribe({
-      next: (res) => this.addresses = res,
+      next: (res) => {
+      console.log(res);
+      this.addresses = res;
+    },
       error: (err) => console.error('Failed to load addresses', err)
     });
   }
@@ -111,7 +108,7 @@ export class CheckoutComponent implements OnInit {
   }
 
   nextStep() {
-    if (this.step === 1 && !this.selectedAddressId) return;
+    if (this.step === 1 && !this.selectedAddress) return;
 
     if (this.step === 2 && this.paymentForm.invalid) {
       this.paymentForm.markAllAsTouched();
@@ -123,6 +120,9 @@ export class CheckoutComponent implements OnInit {
 
   prevStep() {
     this.step = (this.step - 1) as CheckoutStep;
+    if (this.step === 0) {
+      this.router.navigate(['/cart']);
+    }
   }
 
   get total(): number {
@@ -130,10 +130,6 @@ export class CheckoutComponent implements OnInit {
       (sum, item) => sum + item.price * item.quantity,
       0
     );
-  }
-
-  get selectedAddress(): Address | undefined {
-    return this.addresses.find(a => a.Id === this.selectedAddressId!);
   }
 
   placeOrder() {

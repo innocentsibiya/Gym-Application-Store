@@ -82,6 +82,7 @@ namespace backend.Services
             int productId,
             int quantity)
         {
+            //TODO: move this functionality to a repository layer
             var cart = await _context.Carts
                 .Include(c => c.Items)
                 .FirstOrDefaultAsync(c => c.UserId == userId);
@@ -94,7 +95,6 @@ namespace backend.Services
                 };
 
                 _context.Carts.Add(cart);
-                await _context.SaveChangesAsync();
             }
 
             var existingItem = cart.Items.FirstOrDefault(i => i.ProductId == productId);
@@ -150,6 +150,7 @@ namespace backend.Services
             return updatedCart;
         }
 
+        //TODO: move this as well
         private async Task<CartDto> GetCartFromDatabase(int userId)
         {
             return await _context.Carts

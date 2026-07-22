@@ -7,16 +7,16 @@ export class AddressService {
 
   private addresses: Address[] = [
     {
-        Id: 1,
-        UserId: 1,
-        FullName: 'test',
-        Street: '12 main street',
-        City: 'Durban',
-        Province: 'KZN',
-        Country: 'South Africa',
-        PostalCode: '4001',
-        AddressType: 'Home',
-        IsDefault: true
+        id: 1,
+        userId: 1,
+        fullName: 'test',
+        street: '12 main street',
+        city: 'Durban',
+        province: 'KZN',
+        country: 'South Africa',
+        postalCode: '4001',
+        addressType: 'Home',
+        isDefault: true
     }
   ];
 
@@ -25,8 +25,16 @@ export class AddressService {
   }
 
   addAddress(address: Address): Observable<Address> {
-    address.Id = Date.now();
+    address.id = Date.now();
     this.addresses.push(address);
+    return of(address);
+  }
+
+  updateAddress(address: Address): Observable<Address> {
+    const index = this.addresses.findIndex(addr => addr.id === address.id);
+    if (index !== -1) {
+      this.addresses[index] = address;
+    }
     return of(address);
   }
 }

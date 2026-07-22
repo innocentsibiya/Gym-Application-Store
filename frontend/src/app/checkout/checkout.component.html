@@ -9,36 +9,18 @@
     </div>
 
     <div *ngIf="step === 1" class="card">
+    <app-address
+        (addressSelected)="selectedAddress = $event">
+    </app-address>
 
-      <h2>Select Address</h2>
-
-      <div *ngFor="let addr of addresses"
-           class="address-card"
-           [class.selected]="selectedAddressId === addr.Id"
-           (click)="selectAddress(addr.Id)">
-        <strong>{{addr.FullName}}</strong>
-        <p>{{addr.Country}}</p>
-        <small>{{addr.City}}</small>
-      </div>
-
-      <h3>Add New Address</h3>
-
-      <form [formGroup]="addressForm">
-        <input placeholder="Full Name" formControlName="fullName">
-        <input placeholder="Address" formControlName="address">
-        <input placeholder="City" formControlName="city">
-        <input placeholder="Postal Code" formControlName="postalCode">
-
-        <button class="secondary" type="button" (click)="addNewAddress()">
-          Add Address
-        </button>
-      </form>
-
-      <button class="primary"
+      <div class="checkout-actions">
+      <button class="secondary" (click)="prevStep()">Back</button>
+            <button class="primary"
               (click)="nextStep()"
-              [disabled]="!selectedAddressId">
+              [disabled]="!selectedAddress">
         Continue
       </button>
+      </div>
     </div>
 
     <div *ngIf="step === 2" class="card">
@@ -67,8 +49,10 @@
         <input placeholder="Account Number" formControlName="accountNumber">
       </div>
 
+    <div class="checkout-actions">
       <button class="secondary" (click)="prevStep()">Back</button>
       <button class="primary" (click)="nextStep()">Review</button>
+      </div>
     </div>
 
     <div *ngIf="step === 3" class="card">
@@ -77,8 +61,11 @@
       <p>Address ID: {{selectedAddressId}}</p>
       <p>Payment: {{paymentForm.value.method}}</p>
 
+      <div class="checkout-actions">
       <button class="secondary" (click)="prevStep()">Back</button>
       <button class="primary" (click)="placeOrder()">Place Order</button>
+      </div>
+
     </div>
 
   </div>

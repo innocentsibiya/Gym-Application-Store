@@ -20,6 +20,7 @@ import { CheckoutComponent } from './checkout/checkout.component';
 import { CommonModule } from '@angular/common';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { UserComponent } from './user/user.component';
+import { AddressComponent } from './checkout/address/address.component';
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import { UserComponent } from './user/user.component';
     CardComponent,
     CartComponent,
     CheckoutComponent,
-    UserComponent
+    UserComponent,
+    AddressComponent
   ],
   imports: [
     BrowserModule,

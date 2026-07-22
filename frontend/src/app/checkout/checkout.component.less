@@ -4,7 +4,7 @@
   gap: 24px;
   padding: 24px;
   max-width: 1200px;
-  margin: auto;
+  margin: 5% 1% 5% 1%;
 }
 
 .steps {
@@ -34,43 +34,6 @@
   padding: 20px;
   box-shadow: 0 10px 25px rgba(0,0,0,0.05);
   margin-bottom: 20px;
-}
-
-.address-card {
-  border: 1px solid #e5e7eb;
-  padding: 14px;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.address-card:hover {
-  border-color: #0ea5e9;
-  transform: translateY(-2px);
-}
-
-.address-card.selected {
-  border: 2px solid #0ea5e9;
-  background: #f0f9ff;
-}
-
-form {
-  display: grid;
-  gap: 12px;
-}
-
-input {
-  padding: 12px;
-  border-radius: 10px;
-  border: 1px solid #d1d5db;
-  font-size: 0.95rem;
-  transition: 0.2s;
-}
-
-input:focus {
-  outline: none;
-  border-color: #0ea5e9;
-  box-shadow: 0 0 0 2px rgba(14,165,233,0.2);
 }
 
 .payment-options {
@@ -143,6 +106,14 @@ button:disabled {
   font-weight: bold;
   border-top: 1px solid #eee;
   padding-top: 10px;
+}
+
+.checkout-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-top: 24px;
 }
 
 @media (max-width: 900px) {

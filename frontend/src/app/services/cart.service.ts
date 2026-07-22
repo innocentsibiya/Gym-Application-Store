@@ -5,6 +5,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 
 import { Product } from '../interface/Product';
 import { CartDto } from '../Model/CartDto';
+import { CartItemDto } from '../Model/CartItemDto';
 
 @Injectable({
   providedIn: 'root'
