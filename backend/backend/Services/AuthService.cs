@@ -1,8 +1,7 @@
-﻿using backend.Data;
-using backend.DTO;
+﻿using backend.DTO;
 using backend.Interfaces;
+using backend.IRepository;
 using backend.Models;
-using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -10,18 +9,18 @@ namespace backend.Services.Auth
 {
     public class AuthService : IAuthService
     {
-        private readonly GymStoreContext _context;
+        private readonly IUserRepository _userRepository;
         private readonly ITokenService _tokenService;
 
-        public AuthService(GymStoreContext context, ITokenService tokenService)
+        public AuthService(IUserRepository userRepository, ITokenService tokenService)
         {
-            _context = context;
+            _userRepository = userRepository;
             _tokenService = tokenService;
         }
 
         public async Task<AuthResult> RegisterAsync(RegisterDto dto)
         {
-            if (await _context.Users.AnyAsync(u => u.Email == dto.Email))
+            if (await _userRepository.EmailExistsAsync(dto.Email))
                 return new AuthResult { Success = false, Message = "Email already in use." };
 
             var passwordHash = HashPassword(dto.Password);
@@ -36,8 +35,8 @@ namespace backend.Services.Auth
                 CreatedAt = DateTime.UtcNow
             };
 
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
+            await _userRepository.AddAsync(user);
+            await _userRepository.SaveChangesAsync();
 
             return new AuthResult
             {
@@ -48,7 +47,7 @@ namespace backend.Services.Auth
 
         public async Task<AuthResult> LoginAsync(LoginDto dto)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == dto.Email);
+            var user = await _userRepository.GetByEmailAsync(dto.Email);
 
             if (user == null)
                 return new AuthResult { Success = false, Message = "User not found." };
@@ -57,7 +56,7 @@ namespace backend.Services.Auth
                 return new AuthResult { Success = false, Message = "Invalid credentials." };
 
             user.LastLoginAt = DateTime.UtcNow;
-            await _context.SaveChangesAsync();
+            await _userRepository.SaveChangesAsync();
 
             var token = _tokenService.GenerateToken(user);
 

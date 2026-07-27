@@ -1,30 +1,25 @@
-﻿using backend.Data;
-using backend.Interfaces;
-using backend.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using backend.Interfaces;
+using backend.IRepository;
 
 namespace backend.Services
 {
     public class InventoryService : IInventoryService
     {
-        private readonly GymStoreContext _context;
-        public InventoryService(GymStoreContext context) => _context = context;
+        private readonly IInventoryRepository _inventoryRepository;
+
+        public InventoryService(IInventoryRepository inventoryRepository)
+        {
+            _inventoryRepository = inventoryRepository;
+        }
 
         public async Task UpdateStockAsync(int productId, int change)
         {
-            var inventory = await _context.Inventories.FirstOrDefaultAsync(i => i.ProductId == productId);
-            if (inventory == null) throw new KeyNotFoundException("Product not found in inventory.");
-
-            inventory.QuantityAvailable += change;
-            inventory.LastUpdated = DateTime.UtcNow;
-
-            await _context.SaveChangesAsync();
+            await _inventoryRepository.UpdateStockAsync(productId, change);
         }
 
         public async Task<int> GetStockLevelAsync(int productId)
         {
-            var inventory = await _context.Inventories.FirstOrDefaultAsync(i => i.ProductId == productId);
-            return inventory?.QuantityAvailable ?? 0;
+            return await _inventoryRepository.GetStockLevelAsync(productId);
         }
     }
 }
