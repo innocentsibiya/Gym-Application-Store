@@ -1,40 +1,36 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { Address } from '../Model/Address';
+import { HttpClient } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { AddressDto } from '../Model/AddressDto';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root'
+})
 export class AddressService {
+  private apiUrl = 'http://localhost:5074/api/Address';
 
-  private addresses: Address[] = [
-    {
-        id: 1,
-        userId: 1,
-        fullName: 'test',
-        street: '12 main street',
-        city: 'Durban',
-        province: 'KZN',
-        country: 'South Africa',
-        postalCode: '4001',
-        addressType: 'Home',
-        isDefault: true
-    }
-  ];
+  constructor(private http: HttpClient) {}
 
-  getAddresses(): Observable<Address[]> {
-    return of(this.addresses);
+  getUserAddresses(userId: number): Observable<AddressDto[]> {
+    return this.http.get<AddressDto[]>(`${this.apiUrl}/${userId}`);
   }
 
-  addAddress(address: Address): Observable<Address> {
-    address.id = Date.now();
-    this.addresses.push(address);
-    return of(address);
+  addAddress(address: AddressDto): Observable<any> {
+    return this.http.post(this.apiUrl, address).pipe(
+      catchError(err => throwError(() => err.error?.message || 'Failed to add address'))
+    );
   }
 
-  updateAddress(address: Address): Observable<Address> {
-    const index = this.addresses.findIndex(addr => addr.id === address.id);
-    if (index !== -1) {
-      this.addresses[index] = address;
-    }
-    return of(address);
+  updateAddress(address: AddressDto): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${address.id}`, address).pipe(
+      catchError(err => throwError(() => err.error?.message || 'Failed to update address'))
+    );
+  }
+
+  removeAddress(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`).pipe(
+      catchError(err => throwError(() => err.error?.message || 'Failed to remove address'))
+    );
   }
 }

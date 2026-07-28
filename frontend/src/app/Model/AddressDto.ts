@@ -1,12 +1,11 @@
-export interface Address {
+export interface AddressDto {
   id: number;
   userId: number;
-  fullName: string;
   street: string;
   city: string;
   province: string;
-  country: string;
   postalCode: string;
+  country: string;
   addressType: string;
   isDefault: boolean;
 }

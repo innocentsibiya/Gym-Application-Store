@@ -1,7 +1,6 @@
 <div class="checkout-container">
 
   <div>
-
     <div class="steps">
       <span [class.active]="step === 1">Delivery</span>
       <span [class.active]="step === 2">Payment</span>
@@ -9,78 +8,65 @@
     </div>
 
     <div *ngIf="step === 1" class="card">
-    <app-address
-        (addressSelected)="selectedAddress = $event">
-    </app-address>
+      <h2>Available Addresses</h2>
+
+      <div *ngFor="let addr of addresses" class="address-card" [class.selected]="selectedAddressId === addr.id"
+        (click)="selectAddress(addr.id)">
+        <p>{{ addr.street }}, {{ addr.city }}</p>
+        <small>{{ addr.postalCode }}</small>
+        <button class="secondary" type="button" (click)="openEditAddressModal(addr)">Edit</button>
+      </div>
+      <button class="primary" (click)="openAddAddressModal()">Add Address</button>
+
+      <div class="modal" *ngIf="showAddressModal">
+        <div class="modal-content">
+          <app-address [editingAddress]="editingAddress" (addressSelected)="selectedAddress = $event"
+            (cancel)="closeAddressModal()">
+          </app-address>
+        </div>
+      </div>
 
       <div class="checkout-actions">
-      <button class="secondary" (click)="prevStep()">Back</button>
-            <button class="primary"
-              (click)="nextStep()"
-              [disabled]="!selectedAddress">
-        Continue
-      </button>
+        <button class="secondary" (click)="prevStep()">Back</button>
+        <button class="primary" (click)="nextStep()" [disabled]="!selectedAddress">
+          Continue
+        </button>
       </div>
     </div>
 
+    <!-- Step 2: Payment -->
     <div *ngIf="step === 2" class="card">
-
-      <h2>Payment</h2>
-
-      <div class="payment-options">
-        <label>
-          <input type="radio" value="card" formControlName="method">
-          <span>Card</span>
-        </label>
-
-        <label>
-          <input type="radio" value="eft" formControlName="method">
-          <span>EFT</span>
-        </label>
-      </div>
-
-      <div *ngIf="paymentForm.value.method === 'card'">
-        <input placeholder="Card Number" formControlName="cardNumber">
-        <input placeholder="CVV" formControlName="cvv">
-      </div>
-
-      <div *ngIf="paymentForm.value.method === 'eft'">
-        <input placeholder="Bank Name" formControlName="bankName">
-        <input placeholder="Account Number" formControlName="accountNumber">
-      </div>
-
-    <div class="checkout-actions">
-      <button class="secondary" (click)="prevStep()">Back</button>
-      <button class="primary" (click)="nextStep()">Review</button>
-      </div>
+      <app-payment (submit)="handlePaymentSubmit($event)" (back)="prevStep()"></app-payment>
     </div>
 
+    <!-- Step 3: Review -->
     <div *ngIf="step === 3" class="card">
       <h2>Review</h2>
 
       <p>Address ID: {{selectedAddressId}}</p>
-      <p>Payment: {{paymentForm.value.method}}</p>
+      <p>Payment Method: {{paymentForm?.value?.method}}</p>
+      <p *ngIf="paymentForm?.value?.method === 'card'">
+        Card Number: {{paymentForm?.value?.cardNumber}}
+      </p>
+      <p *ngIf="paymentForm?.value?.method === 'eft'">
+        Bank: {{paymentForm?.value?.bankName}}<br>
+        Account: {{paymentForm?.value?.accountNumber}}
+      </p>
 
       <div class="checkout-actions">
-      <button class="secondary" (click)="prevStep()">Back</button>
-      <button class="primary" (click)="placeOrder()">Place Order</button>
+        <button class="secondary" (click)="prevStep()">Back</button>
+        <button class="primary" (click)="placeOrder()">Place Order</button>
       </div>
-
     </div>
 
   </div>
 
   <div class="summary card">
     <h3>Order Summary</h3>
-
     <div class="summary-item" *ngFor="let item of cartItems">
       <span>{{item.productName}} x{{item.quantity}}</span>
       <span>R {{item.price * item.quantity}}</span>
     </div>
-
-    <div class="total">
-      Total: R {{total}}
-    </div>
+    <div class="total">Total: R {{total}}</div>
   </div>
-
 </div>

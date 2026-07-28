@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Address } from '../Model/Address';
+import { AddressDto } from '../Model/AddressDto';
 import { AddressService } from '../services/address.service';
 import { CartService } from '../services/cart.service';
 import { CartItemDto } from '../Model/CartItemDto';
 import { CartDto } from '../Model/CartDto';
 import { Router } from '@angular/router';
+
 type CheckoutStep = 0 | 1 | 2 | 3;
 type PaymentMethod = 'card' | 'eft';
 
@@ -17,104 +18,76 @@ type PaymentMethod = 'card' | 'eft';
 export class CheckoutComponent implements OnInit {
 
   step: CheckoutStep = 1;
-
-  addressForm!: FormGroup;
   paymentForm!: FormGroup;
 
-  addresses: Address[] = [];
+  addresses: AddressDto[] = [];
   selectedAddressId: number | null = null;
-  selectedAddress?: Address;
+  selectedAddress?: AddressDto;
+
   cartItems: CartItemDto[] = [];
+  message: string = '';
+  total = 0;
+  showAddressModal = false;
+  editingAddress?: AddressDto;
 
   constructor(
     private fb: FormBuilder,
     private addressService: AddressService,
     private cartService: CartService,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
-    this.initForms();
     this.loadAddresses();
-    this.handlePaymentChanges();
+    this.loadCart();
+  }
+
+  handlePaymentSubmit(form: FormGroup): void {
+    this.paymentForm = form;
+    this.nextStep();
+  }
+
+  loadAddresses(): void {
+    this.addressService.getUserAddresses(1).subscribe({
+      next: (data) => this.addresses = data,
+      error: (err) => this.message = err
+    });
+  }
+
+  loadCart(): void {
     this.cartService.loadCart().subscribe((cartItem: CartDto) => {
       this.cartItems = cartItem.items;
-    });
-  }
-
-  private initForms() {
-    this.paymentForm = this.fb.group({
-      method: ['card' as PaymentMethod, Validators.required],
-      cardNumber: [''],
-      cvv: [''],
-      bankName: [''],
-      accountNumber: ['']
-    });
-  }
-
-  private handlePaymentChanges() {
-    this.paymentForm.get('method')?.valueChanges.subscribe((method: PaymentMethod) => {
-      this.clearPaymentValidators();
-
-      if (method === 'card') {
-        this.paymentForm.get('cardNumber')?.setValidators([Validators.required, Validators.minLength(12)]);
-        this.paymentForm.get('cvv')?.setValidators([Validators.required, Validators.minLength(3)]);
-      }
-
-      if (method === 'eft') {
-        this.paymentForm.get('bankName')?.setValidators([Validators.required]);
-        this.paymentForm.get('accountNumber')?.setValidators([Validators.required]);
-      }
-
-      this.paymentForm.updateValueAndValidity();
-    });
-  }
-
-  private clearPaymentValidators() {
-    ['cardNumber', 'cvv', 'bankName', 'accountNumber'].forEach(field => {
-      this.paymentForm.get(field)?.clearValidators();
-      this.paymentForm.get(field)?.updateValueAndValidity({ emitEvent: false });
-    });
-  }
-
-  loadAddresses() {
-    this.addressService.getAddresses().subscribe({
-      next: (res) => {
-      console.log(res);
-      this.addresses = res;
-    },
-      error: (err) => console.error('Failed to load addresses', err)
+      this.total = this.cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
     });
   }
 
   selectAddress(id: number) {
     this.selectedAddressId = id;
+    this.selectedAddress = this.addresses.find(a => a.id === id) || undefined;
   }
 
-  addNewAddress() {
-    if (this.addressForm.invalid) {
-      this.addressForm.markAllAsTouched();
-      return;
-    }
+  openAddAddressModal() {
+    this.editingAddress = undefined;
+    this.showAddressModal = true;
+  }
 
-    this.addressService.addAddress(this.addressForm.value)
-      .subscribe({
-        next: () => {
-          this.loadAddresses();
-          this.addressForm.reset();
-        },
-        error: (err) => console.error('Failed to add address', err)
-      });
+  openEditAddressModal(address: AddressDto) {
+    this.editingAddress = address;
+    this.showAddressModal = true;
+  }
+
+  closeAddressModal() {
+    this.showAddressModal = false;
+    this.editingAddress = undefined;
+    this.loadAddresses();
   }
 
   nextStep() {
     if (this.step === 1 && !this.selectedAddress) return;
-
     if (this.step === 2 && this.paymentForm.invalid) {
       this.paymentForm.markAllAsTouched();
       return;
     }
-
     this.step = (this.step + 1) as CheckoutStep;
   }
 
@@ -123,13 +96,6 @@ export class CheckoutComponent implements OnInit {
     if (this.step === 0) {
       this.router.navigate(['/cart']);
     }
-  }
-
-  get total(): number {
-    return this.cartItems.reduce(
-      (sum, item) => sum + item.price * item.quantity,
-      0
-    );
   }
 
   placeOrder() {
@@ -141,5 +107,8 @@ export class CheckoutComponent implements OnInit {
       items: this.cartItems,
       total: this.total
     };
+
+    console.log('Order placed:', payload);
+    // TODO: send to backend
   }
 }

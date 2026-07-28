@@ -1,5 +1,5 @@
-﻿using backend.Interfaces;
-using backend.Models;
+﻿using backend.DTO;
+using backend.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers
@@ -31,10 +31,21 @@ namespace backend.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddAddress(Address address)
+        public async Task<IActionResult> AddAddress([FromBody] AddressDto dto)
         {
-            await _addressService.AddAddressAsync(address);
-            return CreatedAtAction(nameof(GetUserAddresses), new { userId = address.UserId }, address);
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+            await _addressService.AddAddressAsync(dto);
+            return Ok(new { Message = "Address added successfully." });
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateAddress(long id, [FromBody] AddressDto dto)
+        {
+            if (id != dto.Id) return BadRequest("ID mismatch.");
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            await _addressService.UpdateAddressAsync(dto);
+            return Ok(new { Message = "Address updated successfully." });
         }
 
         [HttpDelete("{id}")]

@@ -1,12 +1,14 @@
-﻿using backend.Models;
+﻿using backend.DTO;
 
 namespace backend.Interfaces
 {
     public interface IAddressService
     {
-        Task<IEnumerable<Address>> GetUserAddressesAsync(long userId);
-        Task<Address?> GetDefaultAddressAsync(long userId, string type);
-        Task AddAddressAsync(Address address);
+        Task<IEnumerable<AddressDto>> GetUserAddressesAsync(long userId);
+        Task<AddressDto?> GetDefaultAddressAsync(long userId, string type);
+        Task AddAddressAsync(AddressDto address);
+
+        Task UpdateAddressAsync(AddressDto dto);
         Task RemoveAddressAsync(long id);
     }
 }

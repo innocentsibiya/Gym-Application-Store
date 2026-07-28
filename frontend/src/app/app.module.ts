@@ -21,6 +21,7 @@ import { CommonModule } from '@angular/common';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { UserComponent } from './user/user.component';
 import { AddressComponent } from './checkout/address/address.component';
+import { PaymentComponent } from './checkout/payment/payment.component';
 
 @NgModule({
   declarations: [
@@ -37,7 +38,8 @@ import { AddressComponent } from './checkout/address/address.component';
     CartComponent,
     CheckoutComponent,
     UserComponent,
-    AddressComponent
+    AddressComponent,
+    PaymentComponent
   ],
   imports: [
     BrowserModule,

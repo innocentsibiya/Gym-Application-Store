@@ -1,9 +1,10 @@
 ﻿using backend.Data;
 using backend.IRepository;
 using backend.Models;
+using backend.Repository;
 using Microsoft.EntityFrameworkCore;
 
-namespace backend.Repository
+namespace backend.Services
 {
     public class AddressRepository : Repository<Address>, IAddressRepository
     {
