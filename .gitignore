@@ -6,10 +6,10 @@ frontend/dist/
 frontend/src/environments/*.ts
 
 # .NET build files
-backend/backend/bin/
-backend/backend/obj/
-backend/backend/*.user
-backend/backend/*.suo
+**/bin/
+**/obj/
+*.user
+*.suo
 backend/backend/Data
 
 # Visual Studio files

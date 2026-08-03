@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <!-- The module hosts its own API controller, so it needs the ASP.NET Core surface. -->
+  <!-- Allow the module's test project to construct internal handlers/repositories directly. -->
+  <ItemGroup>
+    <InternalsVisibleTo Include="GymStore.Modules.Cart.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.8" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="9.0.8" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\BuildingBlocks\GymStore.BuildingBlocks.csproj" />
+    <ProjectReference Include="..\GymStore.Modules.Cart.Contracts\GymStore.Modules.Cart.Contracts.csproj" />
+  </ItemGroup>
+
+</Project>
