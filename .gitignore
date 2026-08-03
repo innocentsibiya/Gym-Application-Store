@@ -10,7 +10,6 @@ frontend/src/environments/*.ts
 **/obj/
 *.user
 *.suo
-backend/backend/Data
 
 # Visual Studio files
 .vscode/
