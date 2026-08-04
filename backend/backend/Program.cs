@@ -1,11 +1,16 @@
+using backend.Adapters;
 using backend.Data;
 using backend.Interfaces;
 using backend.IRepository;
 using backend.Repository;
 using backend.Services;
 using backend.Services.Auth;
+using GymStore.BuildingBlocks.Cqrs;
+using GymStore.Modules.Cart;
+using GymStore.Modules.Cart.Application.Abstractions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -21,11 +26,20 @@ builder.Services.AddCors(options =>
 });
 
 // Add services to the container.
-builder.Services.AddControllers().AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+builder.Services.AddControllers()
+    // Register the Cart module's assembly so its CartController is discovered by MVC.
+    .AddApplicationPart(CartModuleExtensions.Assembly)
+    .AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+
+// CQRS dispatcher + modular monolith modules.
+builder.Services.AddCqrs();
+builder.Services.AddCartModule(builder.Configuration);
+// Host adapter that lets the Cart module read product data (name/price/images).
+builder.Services.AddScoped<IProductInfoProvider, ProductInfoProvider>();
+
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
-builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IReviewService, ReviewService>();
 builder.Services.AddScoped<ICouponService, CouponService>();
@@ -35,7 +49,6 @@ builder.Services.AddScoped<ISupplierService, SupplierService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IAddressService, AddressService>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-builder.Services.AddScoped<ICartRepository, CartRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -87,7 +100,11 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<GymStoreContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionString")));
+                options.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionString"))
+                    // The reconstructed DbContext intentionally omits the HasData seed
+                    // (the seed is applied by the existing migration's InsertData calls),
+                    // so ignore the resulting data-only pending-model-changes warning.
+                    .ConfigureWarnings(w => w.Ignore(RelationalEventId.PendingModelChangesWarning)));
 
 var app = builder.Build();
 app.UseCors("AllowAll");
