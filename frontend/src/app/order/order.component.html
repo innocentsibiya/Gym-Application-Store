@@ -1,1 +1,35 @@
-<p>order works!</p>
+<div class="orders-container">
+  <h2>My Orders</h2>
+
+  <div class="filter">
+    <label for="year">Filter by Year:</label>
+    <select id="year" [(ngModel)]="selectedYear" (change)="onYearChange(selectedYear)">
+      <option *ngFor="let y of years" [value]="y">{{ y === 'all' ? 'All Years' : y }}</option>
+    </select>
+  </div>
+
+  <div *ngIf="orders.length === 0">
+    <p>No orders found for {{ selectedYear === 'all' ? 'all years' : selectedYear }}.</p>
+  </div>
+
+  <ul class="order-list">
+    <li *ngFor="let order of orders">
+      <div class="order-header" (click)="toggleExpand(order.id)">
+        <strong>Order #{{ order.id }}</strong>
+        <span>{{ order.createdAt | date:'mediumDate' }}</span>
+        <span class="total">Total: {{ order.totalAmount | currency }}</span>
+        <span class="expand-icon">{{ expandedOrderId === order.id ? '▲' : '▼' }}</span>
+      </div>
+
+      <div class="order-details" *ngIf="expandedOrderId === order.id">
+        <ul>
+          <li *ngFor="let item of order.items">
+            <span>{{ item.product.name }}</span>
+            <span> (x{{ item.quantity }})</span>
+            <span> - {{ item.unitPrice | currency }}</span>
+          </li>
+        </ul>
+      </div>
+    </li>
+  </ul>
+</div>

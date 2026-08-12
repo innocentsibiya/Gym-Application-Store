@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-profile',
@@ -6,15 +7,25 @@ import { Component } from '@angular/core';
   styleUrls: ['./profile.component.less']
 })
 export class ProfileComponent {
-  selectedSection: string = 'info'; // default section
+  selectedSection: string = 'info';
 
   navItems = [
     { label: 'Edit Personal Info', section: 'user' },
-    { label: 'Change Preferences', section: 'preferences' },
+    { label: 'Change Preferences', section: 'preference' },
     { label: 'Orders', section: 'order' },
     { label: 'Edit Address', section: 'address' },
     { label: 'Logout', section: 'logout' }
   ];
+
+  constructor(private route: ActivatedRoute) {}
+  
+  ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      if (params['section']) {
+        this.selectedSection = params['section'];
+      }
+    });
+  }
 
   selectSection(section: string): void {
     if (section === 'logout') {
@@ -27,6 +38,5 @@ export class ProfileComponent {
   logout(): void {
     sessionStorage.clear();
     localStorage.removeItem('authToken');
-    // redirect to login if needed
   }
 }

@@ -77,5 +77,13 @@ namespace backend.Repository
                 .Where(o => o.UserId == userId)
                 .ToListAsync();
         }
+
+        public async Task<IEnumerable<Order>> GetUserOrdersByYearAsync(int userId, int year)
+        {
+            return await _context.Orders
+                .Include(o => o.Items).ThenInclude(i => i.Product)
+                .Where(o => o.UserId == userId && o.CreatedAt.Year == year)
+                .ToListAsync();
+        }
     }
 }

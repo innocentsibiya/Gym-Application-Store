@@ -28,6 +28,8 @@ namespace backend.Data
         public DbSet<Inventory> Inventories { get; set; }
         public DbSet<Supplier> Suppliers { get; set; }
 
+        public DbSet<Preference> Preference { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

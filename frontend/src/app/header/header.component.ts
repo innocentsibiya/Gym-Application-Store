@@ -68,12 +68,9 @@ export class HeaderComponent {
       default: return 'Dashboard';
     }
   }
-  onDropdownClick(item: any): void {
-    if (item.action === 'logout') {
-      this.logout();
-    } else {
-      this.router.navigate([item.route]);
-    }
+
+  onDropdownClick(baseRoute: string, section: string): void {
+    this.router.navigate([baseRoute], { queryParams: { section } });
     this.dropdownOpen = false;
   }
 

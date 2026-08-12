@@ -2,6 +2,7 @@ using backend.Adapters;
 using backend.Data;
 using backend.Interfaces;
 using backend.IRepository;
+using backend.Repositories;
 using backend.Repository;
 using backend.Services;
 using backend.Services.Auth;
@@ -48,6 +49,8 @@ builder.Services.AddScoped<IInventoryService, InventoryService>();
 builder.Services.AddScoped<ISupplierService, SupplierService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IAddressService, AddressService>();
+builder.Services.AddScoped<IPreferenceService, PreferenceService>();
+
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
@@ -59,6 +62,8 @@ builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
 builder.Services.AddScoped<IAddressRepository, AddressRepository>();
+builder.Services.AddScoped<IPreferenceRepository, PreferenceRepository>();
+
 
 // JWT Authentication
 builder.Services.AddAuthentication(options =>

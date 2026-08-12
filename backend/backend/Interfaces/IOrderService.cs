@@ -6,5 +6,6 @@ namespace backend.Interfaces
     {
         Task<Order> PlaceOrderAsync(int userId, int shippingAddressId, int billingAddressId);
         Task<IEnumerable<Order>> GetUserOrdersAsync(int userId);
+        Task<IEnumerable<Order>> GetUserOrdersByYearAsync(int userId, int year);
     }
 }
