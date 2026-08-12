@@ -8,6 +8,9 @@ import { RegisterComponent } from './register/register.component';
 import { HomeComponent } from './home/home.component';
 import { CartComponent } from './cart/cart.component';
 import { CheckoutComponent } from './checkout/checkout.component';
+import { AddressComponent } from './checkout/address/address.component';
+import { OrderComponent } from './order/order.component';
+import { ProfileComponent } from './profile/profile.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -19,6 +22,9 @@ const routes: Routes = [
   { path: 'login', component:LoginComponent },
   { path: 'register', component:RegisterComponent },
   { path: 'checkout', component: CheckoutComponent },
+  { path: 'order', component: OrderComponent },
+  { path: 'profile', component: ProfileComponent },
+  { path: 'address', component: AddressComponent },
   // Wildcard route for 404 page
   { path: '**', redirectTo: '' }
 ];

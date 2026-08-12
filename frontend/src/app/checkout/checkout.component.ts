@@ -6,6 +6,8 @@ import { CartService } from '../services/cart.service';
 import { CartItemDto } from '../Model/CartItemDto';
 import { CartDto } from '../Model/CartDto';
 import { Router } from '@angular/router';
+import { OrderService } from '../services/order.service';
+import { NotificationService } from '../services/notification.service';
 
 type CheckoutStep = 0 | 1 | 2 | 3;
 type PaymentMethod = 'card' | 'eft';
@@ -19,6 +21,10 @@ export class CheckoutComponent implements OnInit {
 
   step: CheckoutStep = 1;
   paymentForm!: FormGroup;
+
+  orderPlaced = false;
+  orderId: number = 1;
+  orderidstring: string = this.orderId.toString();
 
   addresses: AddressDto[] = [];
   selectedAddressId: number | null = null;
@@ -34,12 +40,17 @@ export class CheckoutComponent implements OnInit {
     private fb: FormBuilder,
     private addressService: AddressService,
     private cartService: CartService,
+    private orderService: OrderService,
+    private notify: NotificationService,
     private router: Router
   ) { }
 
   ngOnInit(): void {
     this.loadAddresses();
-    this.loadCart();
+    this.cartService.cart$.subscribe(cart => {
+      this.cartItems = cart?.items || [];
+      this.total = this.cartItems.reduce((sum, i) => sum + i.price * i.quantity, 0);
+    });
   }
 
   handlePaymentSubmit(form: FormGroup): void {
@@ -101,14 +112,14 @@ export class CheckoutComponent implements OnInit {
   placeOrder() {
     if (!this.selectedAddressId || this.paymentForm.invalid) return;
 
-    const payload = {
-      address: this.selectedAddress,
-      payment: this.paymentForm.value,
-      items: this.cartItems,
-      total: this.total
-    };
+  const orderPayload = {
+    userId: 1,
+    shippingAddressId: this.selectedAddressId!,
+    billingAddressId: this.selectedAddressId! 
+  };
 
-    console.log('Order placed:', payload);
-    // TODO: send to backend
+  this.orderService.placeOrder(orderPayload).subscribe(res => {
+    this.notify.show('success', 'Order placed successfully!');
+  });
   }
 }

@@ -2,7 +2,6 @@ import { Component, Output } from '@angular/core';
 import { CartService } from '../services/cart.service';
 import { CartDto } from '../Model/CartDto';
 import { CartItemDto } from '../Model/CartItemDto';
-import { BehaviorSubject } from 'rxjs';
 import { Router } from '@angular/router';
 
 
@@ -14,7 +13,7 @@ import { Router } from '@angular/router';
 export class CartComponent {
   cartItems: CartItemDto[] = [];
 
-  constructor(private cartService: CartService,private router: Router) {}
+  constructor(private cartService: CartService, private router: Router) {}
 
   ngOnInit(): void {
     this.loadCart();
@@ -57,6 +56,7 @@ export class CartComponent {
   }
 
   proceedToCart(pCartItems: CartItemDto[]) : void{
-  this.router.navigate(['/checkout']);
+    sessionStorage.setItem('cart', JSON.stringify(pCartItems));
+    this.router.navigate(['/checkout']);
   }
 }

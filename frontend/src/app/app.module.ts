@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { HomeComponent } from './home/home.component';
 import { AboutComponent } from './about/about.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HelpComponent } from './help/help.component';
 import { RegisterComponent } from './register/register.component';
 import { LoginComponent } from './login/login.component';
@@ -22,6 +23,11 @@ import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { UserComponent } from './user/user.component';
 import { AddressComponent } from './checkout/address/address.component';
 import { PaymentComponent } from './checkout/payment/payment.component';
+import { ToastComponent } from './toast/toast.component';
+import { NotificationComponent } from './notification/notification.component';
+import { ProfileComponent } from './profile/profile.component';
+import { OrderComponent } from './order/order.component';
+import { PreferenceComponent } from './preference/preference.component';
 
 @NgModule({
   declarations: [
@@ -39,7 +45,12 @@ import { PaymentComponent } from './checkout/payment/payment.component';
     CheckoutComponent,
     UserComponent,
     AddressComponent,
-    PaymentComponent
+    PaymentComponent,
+    ToastComponent,
+    NotificationComponent,
+    ProfileComponent,
+    OrderComponent,
+    PreferenceComponent
   ],
   imports: [
     BrowserModule,
@@ -48,7 +59,8 @@ import { PaymentComponent } from './checkout/payment/payment.component';
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
-    NgbDropdownModule
+    NgbDropdownModule,
+    BrowserAnimationsModule
   ],
   providers: [{ provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }],
   bootstrap: [AppComponent]

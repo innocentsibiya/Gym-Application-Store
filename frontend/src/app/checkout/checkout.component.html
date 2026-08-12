@@ -44,13 +44,13 @@
       <h2>Review</h2>
 
       <p>Address ID: {{selectedAddressId}}</p>
-      <p>Payment Method: {{paymentForm?.value?.method}}</p>
-      <p *ngIf="paymentForm?.value?.method === 'card'">
-        Card Number: {{paymentForm?.value?.cardNumber}}
+      <p>Payment Method: {{paymentForm.value.method}}</p>
+      <p *ngIf="paymentForm.value.method === 'card'">
+        Card Number: {{paymentForm.value.cardNumber}}
       </p>
-      <p *ngIf="paymentForm?.value?.method === 'eft'">
-        Bank: {{paymentForm?.value?.bankName}}<br>
-        Account: {{paymentForm?.value?.accountNumber}}
+      <p *ngIf="paymentForm.value.method === 'eft'">
+        Bank: {{paymentForm.value.bankName}}<br>
+        Account: {{paymentForm.value.accountNumber}}
       </p>
 
       <div class="checkout-actions">
@@ -58,6 +58,13 @@
         <button class="primary" (click)="placeOrder()">Place Order</button>
       </div>
     </div>
+
+    <app-notification *ngIf="orderPlaced" [title]="'🎉 Order Placed Successfully!'"
+      [message]="'Your order has been confirmed.'" [details]="[
+        {label: 'Order ID', value: orderidstring},
+        {label: 'Total', value: 'R ' + total}
+      ]">
+    </app-notification>
 
   </div>
 
