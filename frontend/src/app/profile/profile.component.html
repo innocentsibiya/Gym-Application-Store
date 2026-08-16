@@ -1,0 +1,25 @@
+<div class="profile-container">
+  <!-- Sidebar -->
+  <aside class="profile-sidebar">
+    <h2 class="sidebar-title">My Account</h2>
+    <ul class="sidebar-menu">
+      <li *ngFor="let item of navItems">
+        <a (click)="selectSection(item.section)"
+           [class.active]="selectedSection === item.section">
+          {{ item.label }}
+        </a>
+      </li>
+    </ul>
+  </aside>
+
+  <!-- Main content -->
+  <section class="profile-content">
+    <ng-container [ngSwitch]="selectedSection">
+      <app-user *ngSwitchCase="'user'"></app-user>
+      <app-preference *ngSwitchCase="'preference'"></app-preference>
+      <app-order *ngSwitchCase="'order'"></app-order>
+      <app-address *ngSwitchCase="'address'"></app-address>
+      <div *ngSwitchDefault>Select a section</div>
+    </ng-container>
+  </section>
+</div>

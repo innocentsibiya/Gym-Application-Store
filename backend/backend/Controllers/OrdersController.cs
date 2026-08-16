@@ -1,4 +1,5 @@
-﻿using backend.Interfaces;
+﻿using backend.DTO;
+using backend.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers
@@ -15,9 +16,13 @@ namespace backend.Controllers
         }
 
         [HttpPost("place")]
-        public async Task<IActionResult> PlaceOrder(int userId, int shippingAddressId, int billingAddressId)
+        public async Task<IActionResult> PlaceOrder([FromBody] PlaceOrderRequest request)
         {
-            var order = await _orderService.PlaceOrderAsync(userId, shippingAddressId, billingAddressId);
+            var order = await _orderService.PlaceOrderAsync(
+                request.UserId,
+                request.ShippingAddressId,
+                request.BillingAddressId
+            );
             return Ok(order);
         }
 

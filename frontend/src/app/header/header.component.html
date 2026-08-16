@@ -6,40 +6,43 @@
   </a>
 
   <input type="text" class="search-container" placeholder="Search..." />
+
+  <!-- Orders icon -->
+  <a routerLink="/profile/orders" class="nav-item icon-link">
+    <i class="fa fa-shopping-bag"></i>
+    <span class="icon-count">{{ ordersService.getOrderCount() }}</span>
+  </a>
+
+  <!-- Notifications icon -->
+  <a routerLink="/notification" class="nav-item icon-link">
+    <i class="fa fa-bell"></i>
+    <span class="icon-count">0</span>
+  </a>
+
+  <!-- Cart icon -->
+  <a routerLink="/cart" class="nav-item icon-link">
+    <i class="fa fa-shopping-cart"></i>
+    <span class="icon-count">{{ cartService.getCartCount() }}</span>
+  </a>
+
+    <!-- Profile dropdown -->
   <div class="nav-item profile-dropdown">
-      <a class="nav-link" (click)="toggleDropdown()" href="javascript:void(0)">
+    <a class="nav-link" (click)="toggleDropdown()" href="javascript:void(0)">
+      <div class="photo">
+        <img alt="Profile Photo" src="assets/images/anime3.png" />
+      </div>
+      <b class="caret d-none d-lg-block d-xl-block"></b>
+      <p class="d-lg-none">Menu</p>
+    </a>
 
-        <div class="photo">
-          <img alt="Profile Photo" src="assets/images/anime3.png" />
-        </div>
-
-        <b class="caret d-none d-lg-block d-xl-block"></b>
-        <p class="d-lg-none">Menu</p>
-      </a>
-
-      <ul class="dropdown-navbar" *ngIf="dropdownOpen">
-
-        <li class="nav-link">
-          <a class="nav-item" href="javascript:void(0)">
-            Profile
-          </a>
-        </li>
-
-        <li class="nav-link">
-          <a class="nav-item" href="javascript:void(0)">
-            Settings
-          </a>
-        </li>
-
-        <li class="dropdown-divider"></li>
-
-        <li class="nav-link">
-          <a class="nav-item" (click)="logout()">
-            Log out
-          </a>
-        </li>
-
-      </ul>
+    <ul class="dropdown-navbar" *ngIf="dropdownOpen">
+      <li class="nav-link"><a (click)="onDropdownClick('/profile')" class="nav-item">Profile</a></li>
+      <li class="nav-link"><a (click)="onDropdownClick('/preference')" class="nav-item">Preferences</a></li>
+      <li class="nav-link"><a (click)="onDropdownClick('/order')" class="nav-item">Orders</a></li>
+      <li class="nav-link"><a (click)="onDropdownClick('/address')" class="nav-item">Addresses</a></li>
+      <li class="dropdown-divider"></li>
+      <li class="nav-link"><a class="nav-item" (click)="logout()">Log out</a></li>
+    </ul>
   </div>
 <div class="header-separator">
 </div>

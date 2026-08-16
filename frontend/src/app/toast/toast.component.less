@@ -1,0 +1,58 @@
+.toast-container {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 9999;
+}
+
+.toast {
+  padding: 12px 20px 8px;
+  display: block !important;
+  border-radius: 6px;
+  color: white;
+  font-weight: 500;
+  min-width: 240px;
+  text-align: left;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.toast-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.icon { margin-right: 8px; font-size: 18px; }
+.toast-text { flex: 1; margin-right: 10px; }
+
+.close-btn {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+}
+.close-btn:hover { opacity: 0.7; }
+
+.progress-bar {
+  height: 4px;
+  background: rgba(255,255,255,0.3);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 6px;
+}
+.progress-fill { height: 100%; transition: width 0.1s linear; }
+
+.toast.info { background: #3b82f6; }
+.toast.success { background: #10b981; }
+.toast.warning { background: #f59e0b; }
+.toast.error { background: #ef4444; }
+
+.progress-fill.info { background: #93c5fd; }
+.progress-fill.success { background: #6ee7b7; }
+.progress-fill.warning { background: #fcd34d; }
+.progress-fill.error { background: #fca5a5; }

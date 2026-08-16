@@ -5,28 +5,29 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 
 import { Product } from '../interface/Product';
 import { CartDto } from '../Model/CartDto';
+import { CartItemDto } from '../Model/CartItemDto';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class CartService {
-
   private apiUrl = 'http://localhost:5074/api/Cart';
   private defaultUserId = 1;
 
   private cartSubject = new BehaviorSubject<CartDto | null>(null);
+  cart$ = this.cartSubject.asObservable();
 
-  public cart$ = this.cartSubject.asObservable();
+  private storageKey = 'cart';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    const stored = sessionStorage.getItem(this.storageKey);
+    if (stored) {
+      this.cartSubject.next(JSON.parse(stored));
+    }
+  }
 
   loadCart(): Observable<CartDto> {
     const url = `${this.apiUrl}/${this.defaultUserId}`;
-
     return this.http.get<CartDto>(url).pipe(
-      tap(cart => {
-        this.cartSubject.next(cart);
-      }),
+      tap(cart => this.updateCart(cart)),
       catchError(error => {
         console.error('Failed to load cart', error);
         return throwError(() => error);
@@ -39,27 +40,14 @@ export class CartService {
   }
 
   addToCart(product: Product): Observable<CartDto> {
-    const existingItem = this.cartSubject.value?.items?.find(
-      i => i.productId === product.id
-    );
-
-    const quantity = existingItem
-      ? existingItem.quantity + 1
-      : 1;
+    const existingItem = this.cartSubject.value?.items?.find(i => i.productId === product.id);
+    const quantity = existingItem ? existingItem.quantity + 1 : 1;
 
     const url = `${this.apiUrl}/${this.defaultUserId}/add/${product.id}`;
+    const params = new HttpParams().set('quantity', quantity.toString());
 
-    const params = new HttpParams()
-      .set('quantity', quantity.toString());
-
-    return this.http.post<CartDto>(
-      url,
-      null,
-      { params }
-    ).pipe(
-      tap(cart => {
-        this.cartSubject.next(cart);
-      }),
+    return this.http.post<CartDto>(url, null, { params }).pipe(
+      tap(cart => this.updateCart(cart)),
       catchError(error => {
         console.error('Failed to add item', error);
         return throwError(() => error);
@@ -68,13 +56,9 @@ export class CartService {
   }
 
   removeFromCart(productId: number): Observable<CartDto> {
-
     const url = `${this.apiUrl}/${this.defaultUserId}/remove/${productId}`;
-
     return this.http.delete<CartDto>(url).pipe(
-      tap(cart => {
-        this.cartSubject.next(cart);
-      }),
+      tap(cart => this.updateCart(cart)),
       catchError(error => {
         console.error('Failed to remove item', error);
         return throwError(() => error);
@@ -83,21 +67,20 @@ export class CartService {
   }
 
   checkCartItem(productId: number): boolean {
-
-    return this.cartSubject.value?.items.some(
-      item => item.productId === productId
-    ) ?? false;
+    return this.cartSubject.value?.items.some(item => item.productId === productId) ?? false;
   }
 
   getCartCount(): number {
-
-    return this.cartSubject.value?.items.reduce(
-      (sum, item) => sum + item.quantity,
-      0
-    ) ?? 0;
+    return this.cartSubject.value?.items.reduce((sum, item) => sum + item.quantity, 0) ?? 0;
   }
 
   clearCart(): void {
     this.cartSubject.next(null);
+    sessionStorage.removeItem(this.storageKey);
+  }
+
+  private updateCart(cart: CartDto): void {
+    this.cartSubject.next(cart);
+    sessionStorage.setItem(this.storageKey, JSON.stringify(cart));
   }
 }

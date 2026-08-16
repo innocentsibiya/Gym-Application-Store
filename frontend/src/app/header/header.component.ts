@@ -1,5 +1,8 @@
 import { Component, HostListener } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
+import { CartService } from '../services/cart.service';
+import { NotificationService } from '../services/notification.service';
+import { OrderService } from '../services/order.service';
 
 @Component({
   selector: 'app-header',
@@ -12,15 +15,16 @@ export class HeaderComponent {
     { className: 'about', label: 'About', route: '/about' },
     { className: 'help', label: 'Help', route: '/help' },
     { className: 'register', label: 'Register', route: '/register' },
-    { className: 'login', label: 'Login', route: '/login' },
-    { className: 'cart', label: 'Cart', route: '/cart' }
+    { className: 'login', label: 'Login', route: '/login' }
   ];
 
  dropdownOpen = false;
   currentTitle = '';
   user: any = null; 
 
-  constructor(private router: Router) {}
+  constructor(private router: Router,    public cartService: CartService,
+    public notificationService: NotificationService,
+    public ordersService: OrderService) {}
 
   ngOnInit() {
     this.router.events.subscribe(event => {
@@ -63,6 +67,14 @@ export class HeaderComponent {
       case 'table': return 'Table List';
       default: return 'Dashboard';
     }
+  }
+  onDropdownClick(item: any): void {
+    if (item.action === 'logout') {
+      this.logout();
+    } else {
+      this.router.navigate([item.route]);
+    }
+    this.dropdownOpen = false;
   }
 
   @HostListener('document:click', ['$event'])

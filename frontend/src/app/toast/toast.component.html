@@ -1,0 +1,19 @@
+<div class="toast-container">
+  <div *ngFor="let t of messages" class="toast" [ngClass]="t.msg.type">
+    <div class="toast-header">
+      <span class="icon">
+        <ng-container [ngSwitch]="t.msg.type">
+          <span *ngSwitchCase="'success'">✔</span>
+          <span *ngSwitchCase="'info'">ℹ</span>
+          <span *ngSwitchCase="'warning'">⚠</span>
+          <span *ngSwitchCase="'error'">✖</span>
+        </ng-container>
+      </span>
+      <span class="toast-text">{{t.msg.text}}</span>
+      <button class="close-btn" (click)="removeToast(t)">×</button>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" [style.width.%]="t.progress" [ngClass]="t.msg.type"></div>
+    </div>
+  </div>
+</div>

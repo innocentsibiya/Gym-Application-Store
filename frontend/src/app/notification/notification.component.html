@@ -1,0 +1,16 @@
+<div class="notification-container">
+  <div class="notification-card">
+    <h1>{{title}}</h1>
+    <p>{{message}}</p>
+
+    <div class="notification-details" *ngIf="details?.length">
+      <div *ngFor="let d of details">
+        <p><strong>{{d.label}}:</strong> {{d.value}}</p>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="primary" (click)="goHome()">OK</button>
+    </div>
+  </div>
+</div>
