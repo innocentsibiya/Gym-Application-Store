@@ -32,5 +32,12 @@ namespace backend.Controllers
             var orders = await _orderService.GetUserOrdersAsync(userId);
             return Ok(orders);
         }
+
+        [HttpGet("user/{userId}/year/{year}")]
+        public async Task<IActionResult> GetUserOrdersByYear(int userId, int year)
+        {
+            var orders = await _orderService.GetUserOrdersByYearAsync(userId, year);
+            return Ok(orders);
+        }
     }
 }

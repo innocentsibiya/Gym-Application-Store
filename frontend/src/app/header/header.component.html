@@ -8,7 +8,7 @@
   <input type="text" class="search-container" placeholder="Search..." />
 
   <!-- Orders icon -->
-  <a routerLink="/profile/orders" class="nav-item icon-link">
+  <a routerLink="/order" class="nav-item icon-link">
     <i class="fa fa-shopping-bag"></i>
     <span class="icon-count">{{ ordersService.getOrderCount() }}</span>
   </a>
@@ -35,14 +35,14 @@
       <p class="d-lg-none">Menu</p>
     </a>
 
-    <ul class="dropdown-navbar" *ngIf="dropdownOpen">
-      <li class="nav-link"><a (click)="onDropdownClick('/profile')" class="nav-item">Profile</a></li>
-      <li class="nav-link"><a (click)="onDropdownClick('/preference')" class="nav-item">Preferences</a></li>
-      <li class="nav-link"><a (click)="onDropdownClick('/order')" class="nav-item">Orders</a></li>
-      <li class="nav-link"><a (click)="onDropdownClick('/address')" class="nav-item">Addresses</a></li>
-      <li class="dropdown-divider"></li>
-      <li class="nav-link"><a class="nav-item" (click)="logout()">Log out</a></li>
-    </ul>
+  <ul class="dropdown-navbar" *ngIf="dropdownOpen">
+    <li class="nav-link"><a (click)="onDropdownClick('/profile', 'user')" class="nav-item">Profile</a></li>
+    <li class="nav-link"><a (click)="onDropdownClick('/profile', 'preference')" class="nav-item">Preferences</a></li>
+    <li class="nav-link"><a (click)="onDropdownClick('/profile', 'order')" class="nav-item">Orders</a></li>
+    <li class="nav-link"><a (click)="onDropdownClick('/profile', 'address')" class="nav-item">Addresses</a></li>
+    <li class="dropdown-divider"></li>
+    <li class="nav-link"><a class="nav-item" (click)="logout()">Log out</a></li>
+  </ul>
   </div>
 <div class="header-separator">
 </div>

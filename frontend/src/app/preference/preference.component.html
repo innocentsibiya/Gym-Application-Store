@@ -1,1 +1,58 @@
-<p>preference works!</p>
+<div class="preferences-container">
+  <h2 class="title">My Preferences</h2>
+
+  <div class="pref-item">
+    <label>Theme</label>
+    <select [(ngModel)]="prefs.theme">
+      <option value="light">Light Mode</option>
+      <option value="dark">Dark Mode</option>
+      <option value="system">System Default</option>
+    </select>
+  </div>
+
+  <div class="pref-item">
+    <label>Items per Page</label>
+    <select [(ngModel)]="prefs.itemsPerPage">
+      <option [value]="6">6</option>
+      <option [value]="12">12</option>
+      <option [value]="15">15</option>
+    </select>
+  </div>
+
+  <div class="pref-item">
+    <label>Default Sort Order</label>
+    <select [(ngModel)]="prefs.sortOrder">
+      <option value="newest">Newest First</option>
+      <option value="priceLow">Price: Low to High</option>
+      <option value="priceHigh">Price: High to Low</option>
+      <option value="popular">Most Popular</option>
+    </select>
+  </div>
+
+  <div class="pref-item">
+    <label>Currency</label>
+    <select [(ngModel)]="prefs.currency">
+      <option value="ZAR">ZAR (Rand)</option>
+      <option value="USD">USD</option>
+      <option value="EUR">EUR</option>
+    </select>
+  </div>
+
+  <div class="pref-item">
+    <label>Language</label>
+    <select [(ngModel)]="prefs.language">
+      <option value="en">English</option>
+      <option value="af">Afrikaans</option>
+      <option value="zu">isiZulu</option>
+    </select>
+  </div>
+
+  <div class="pref-item">
+    <label>
+      <input type="checkbox" [(ngModel)]="prefs.notifications" />
+      Enable Notifications
+    </label>
+  </div>
+
+  <button class="save-btn" (click)="save()">Save Preferences</button>
+</div>

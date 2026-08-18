@@ -1,6 +1,7 @@
 ﻿using backend.Interfaces;
 using backend.IRepository;
 using backend.Models;
+using backend.Repository;
 
 namespace backend.Services
 {
@@ -21,6 +22,11 @@ namespace backend.Services
         public async Task<IEnumerable<Order>> GetUserOrdersAsync(int userId)
         {
             return await _orderRepository.GetUserOrdersAsync(userId);
+        }
+
+        public async Task<IEnumerable<Order>> GetUserOrdersByYearAsync(int userId, int year)
+        {
+            return await _orderRepository.GetUserOrdersByYearAsync(userId, year);
         }
     }
 }

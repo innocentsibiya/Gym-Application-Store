@@ -21,7 +21,7 @@ export class OrderService {
     );
   }
 
-  getOrdersByUserId(userId: number): Observable<Order[]> {
+  getOrdersByUserId(userId: number = 1): Observable<Order[]> {
     return this.http.get<Order[]>(`${this.apiUrl}/user/${userId}`).pipe(
       tap(orders => this.orderCountSubject.next(orders.length))
     );
@@ -32,5 +32,9 @@ export class OrderService {
 
   getOrderCount(): number {
     return this.orderCountSubject.value;
+  }
+
+  getOrdersByYear(userId: number = 1, year: number) {
+    return this.http.get(`${this.apiUrl}/user/${userId}/year/${year}`);
   }
 }
