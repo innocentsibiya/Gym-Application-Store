@@ -1,11 +1,14 @@
-namespace GymStore.Modules.Ordering.Domain;
+namespace GymStore.Modules.Payments.Domain;
 
-/// <summary>Payment record for an order (part of the aggregate; not yet exercised by any flow).</summary>
+/// <summary>
+/// A payment recorded against an order. Owned by the Payments module. Deliberately holds no
+/// card data — only method, status, amount and a transaction reference.
+/// </summary>
 public class Payment
 {
     public long Id { get; set; }
     public long OrderId { get; set; }
-    public string PaymentMethod { get; set; } = "CreditCard";
+    public string PaymentMethod { get; set; } = "Card";
     public string PaymentStatus { get; set; } = "Pending";
     public string? TransactionId { get; set; }
     public decimal Amount { get; set; }

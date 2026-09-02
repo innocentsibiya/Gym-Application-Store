@@ -115,7 +115,8 @@ export class CheckoutComponent implements OnInit {
   const orderPayload = {
     userId: 1,
     shippingAddressId: this.selectedAddressId!,
-    billingAddressId: this.selectedAddressId! 
+    billingAddressId: this.selectedAddressId!,
+    method: this.paymentForm.value.method
   };
 
   this.orderService.placeOrder(orderPayload).subscribe(res => {

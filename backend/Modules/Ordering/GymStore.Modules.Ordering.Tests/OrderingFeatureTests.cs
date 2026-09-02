@@ -23,23 +23,31 @@ public class OrderingFeatureTests
         await using var ctx = TestContext.NewOrderingDbContext();
         var cart = new CartContentsDto(10, 1, new[] { new CartLineDto(1, 2), new CartLineDto(6, 3) });
         var cartApi = new FakeCartModuleApi(cart);
+        var paymentApi = new FakePaymentModuleApi();
         var handler = new PlaceOrderCommandHandler(
             new OrderRepository(ctx), cartApi, new FakeCatalogModuleApi(Dumbbell, Kettlebell),
-            NullLogger<PlaceOrderCommandHandler>.Instance);
+            paymentApi, NullLogger<PlaceOrderCommandHandler>.Instance);
 
-        var result = await handler.Handle(new PlaceOrderCommand(1, 5, 5), CancellationToken.None);
+        var result = await handler.Handle(new PlaceOrderCommand(1, 5, 5, "eft"), CancellationToken.None);
 
         Assert.Equal(1, result.UserId);
         Assert.Equal(5, result.ShippingAddressId);
         Assert.Equal(2, result.Items.Count);
         Assert.Equal(60m, result.Items.Single(i => i.ProductId == 1).UnitPrice);
         Assert.Equal(75m, result.Items.Single(i => i.ProductId == 6).UnitPrice);
+        Assert.Equal(345m, result.TotalAmount); // 60*2 + 75*3 — totals now computed
         Assert.Equal(1, cartApi.ClearCount); // cart cleared after placement
 
-        // Order was persisted with its lines.
+        // Payment recorded for the order with the computed amount and chosen method.
+        Assert.Equal(1, paymentApi.CreateCount);
+        Assert.Equal(345m, paymentApi.Amount);
+        Assert.Equal("eft", paymentApi.Method);
+
+        // Order was persisted with its lines and total.
         var persisted = await ctx.Orders.Include(o => o.Items).SingleAsync();
         Assert.Equal(1, persisted.UserId);
         Assert.Equal(2, persisted.Items.Count);
+        Assert.Equal(345m, persisted.TotalAmount);
     }
 
     [Fact]
@@ -49,7 +57,7 @@ public class OrderingFeatureTests
         var cartApi = new FakeCartModuleApi(new CartContentsDto(10, 1, Array.Empty<CartLineDto>()));
         var handler = new PlaceOrderCommandHandler(
             new OrderRepository(ctx), cartApi, new FakeCatalogModuleApi(),
-            NullLogger<PlaceOrderCommandHandler>.Instance);
+            new FakePaymentModuleApi(), NullLogger<PlaceOrderCommandHandler>.Instance);
 
         await Assert.ThrowsAsync<InvalidOperationException>(() =>
             handler.Handle(new PlaceOrderCommand(1, 5, 5), CancellationToken.None));
@@ -64,7 +72,7 @@ public class OrderingFeatureTests
         await using var ctx = TestContext.NewOrderingDbContext();
         var handler = new PlaceOrderCommandHandler(
             new OrderRepository(ctx), new FakeCartModuleApi(null), new FakeCatalogModuleApi(),
-            NullLogger<PlaceOrderCommandHandler>.Instance);
+            new FakePaymentModuleApi(), NullLogger<PlaceOrderCommandHandler>.Instance);
 
         await Assert.ThrowsAsync<InvalidOperationException>(() =>
             handler.Handle(new PlaceOrderCommand(1, 5, 5), CancellationToken.None));

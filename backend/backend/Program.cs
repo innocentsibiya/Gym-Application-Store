@@ -11,6 +11,7 @@ using GymStore.Modules.Cart;
 using GymStore.Modules.Cart.Application.Abstractions;
 using GymStore.Modules.Catalog;
 using GymStore.Modules.Ordering;
+using GymStore.Modules.Payments;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -34,6 +35,7 @@ builder.Services.AddControllers()
     .AddApplicationPart(CartModuleExtensions.Assembly)
     .AddApplicationPart(CatalogModuleExtensions.Assembly)
     .AddApplicationPart(OrderingModuleExtensions.Assembly)
+    .AddApplicationPart(PaymentsModuleExtensions.Assembly)
     .AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
 // CQRS dispatcher + modular monolith modules.
@@ -41,6 +43,7 @@ builder.Services.AddCqrs();
 builder.Services.AddCartModule(builder.Configuration);
 builder.Services.AddCatalogModule(builder.Configuration);
 builder.Services.AddOrderingModule(builder.Configuration);
+builder.Services.AddPaymentsModule(builder.Configuration);
 // Host adapter that lets the Cart module read product data (name/price/images).
 builder.Services.AddScoped<IProductInfoProvider, ProductInfoProvider>();
 
