@@ -12,6 +12,8 @@ using GymStore.Modules.Cart.Application.Abstractions;
 using GymStore.Modules.Catalog;
 using GymStore.Modules.Ordering;
 using GymStore.Modules.Payments;
+using GymStore.Modules.Reviews;
+using GymStore.Modules.Reviews.Application.Abstractions;
 using GymStore.Modules.Shipping;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -38,6 +40,7 @@ builder.Services.AddControllers()
     .AddApplicationPart(OrderingModuleExtensions.Assembly)
     .AddApplicationPart(PaymentsModuleExtensions.Assembly)
     .AddApplicationPart(ShippingModuleExtensions.Assembly)
+    .AddApplicationPart(ReviewsModuleExtensions.Assembly)
     .AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
 // CQRS dispatcher + modular monolith modules.
@@ -47,11 +50,13 @@ builder.Services.AddCatalogModule(builder.Configuration);
 builder.Services.AddOrderingModule(builder.Configuration);
 builder.Services.AddPaymentsModule(builder.Configuration);
 builder.Services.AddShippingModule(builder.Configuration);
+builder.Services.AddReviewsModule(builder.Configuration);
 // Host adapter that lets the Cart module read product data (name/price/images).
 builder.Services.AddScoped<IProductInfoProvider, ProductInfoProvider>();
+// Host adapter that lets the Reviews module resolve reviewer display names.
+builder.Services.AddScoped<IReviewerInfoProvider, ReviewerInfoProvider>();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IReviewService, ReviewService>();
 builder.Services.AddScoped<ICouponService, CouponService>();
 builder.Services.AddScoped<IWishlistService, WishlistService>();
 builder.Services.AddScoped<IInventoryService, InventoryService>();
@@ -66,7 +71,6 @@ builder.Services.AddScoped<IWishlistRepository, WishlistRepository>();
 builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
 builder.Services.AddScoped<ICouponRepository, CouponRepository>();
 builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
-builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
 builder.Services.AddScoped<IAddressRepository, AddressRepository>();
 builder.Services.AddScoped<IPreferenceRepository, PreferenceRepository>();
 
