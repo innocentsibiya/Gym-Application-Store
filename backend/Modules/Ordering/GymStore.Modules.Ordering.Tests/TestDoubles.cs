@@ -2,6 +2,7 @@ using GymStore.Modules.Cart.Contracts;
 using GymStore.Modules.Catalog.Contracts;
 using GymStore.Modules.Ordering.Infrastructure.Persistence;
 using GymStore.Modules.Payments.Contracts;
+using GymStore.Modules.Shipping.Contracts;
 using Microsoft.EntityFrameworkCore;
 
 namespace GymStore.Modules.Ordering.Tests;
@@ -46,6 +47,20 @@ internal sealed class FakePaymentModuleApi : IPaymentModuleApi
         OrderId = orderId;
         Method = method;
         Amount = amount;
+        return Task.CompletedTask;
+    }
+}
+
+/// <summary>Fake Shipping contract: records the shipment it was asked to create.</summary>
+internal sealed class FakeShippingModuleApi : IShippingModuleApi
+{
+    public int CreateCount { get; private set; }
+    public long OrderId { get; private set; }
+
+    public Task CreateShipmentAsync(long orderId, CancellationToken ct = default)
+    {
+        CreateCount++;
+        OrderId = orderId;
         return Task.CompletedTask;
     }
 }

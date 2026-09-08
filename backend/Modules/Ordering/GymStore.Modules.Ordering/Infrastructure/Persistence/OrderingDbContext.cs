@@ -5,8 +5,9 @@ namespace GymStore.Modules.Ordering.Infrastructure.Persistence;
 
 /// <summary>
 /// The Ordering module's own EF Core context. Maps the order aggregate to the existing
-/// Orders/OrderItems/Payments/Shipments tables, marked ExcludeFromMigrations because the DDL is
-/// still owned by the host's GymStoreContext during this extraction (see plan).
+/// Orders/OrderItems tables, marked ExcludeFromMigrations because the DDL is still owned by the
+/// host's GymStoreContext during this extraction (see plan). Payments and Shipments are owned by
+/// their own modules.
 /// </summary>
 public class OrderingDbContext : DbContext
 {
@@ -16,7 +17,6 @@ public class OrderingDbContext : DbContext
 
     public DbSet<Order> Orders => Set<Order>();
     public DbSet<OrderItem> OrderItems => Set<OrderItem>();
-    public DbSet<Shipment> Shipments => Set<Shipment>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -29,16 +29,11 @@ public class OrderingDbContext : DbContext
         order.Property(o => o.Discount).HasColumnType("decimal(18,2)");
         order.Property(o => o.TotalAmount).HasColumnType("decimal(18,2)");
         order.HasMany(o => o.Items).WithOne().HasForeignKey(i => i.OrderId).OnDelete(DeleteBehavior.Cascade);
-        order.HasMany(o => o.Shipments).WithOne().HasForeignKey(s => s.OrderId).OnDelete(DeleteBehavior.Cascade);
 
         var item = modelBuilder.Entity<OrderItem>();
         item.ToTable("OrderItems", t => t.ExcludeFromMigrations());
         item.HasKey(i => i.Id);
         item.Property(i => i.UnitPrice).HasColumnType("decimal(18,2)");
         item.Property(i => i.DiscountApplied).HasColumnType("decimal(18,2)");
-
-        var shipment = modelBuilder.Entity<Shipment>();
-        shipment.ToTable("Shipments", t => t.ExcludeFromMigrations());
-        shipment.HasKey(s => s.Id);
     }
 }

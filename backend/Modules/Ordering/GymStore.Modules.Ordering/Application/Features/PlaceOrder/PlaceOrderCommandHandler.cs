@@ -5,6 +5,7 @@ using GymStore.Modules.Ordering.Application.Abstractions;
 using GymStore.Modules.Ordering.Application.Responses;
 using GymStore.Modules.Ordering.Domain;
 using GymStore.Modules.Payments.Contracts;
+using GymStore.Modules.Shipping.Contracts;
 using Microsoft.Extensions.Logging;
 
 namespace GymStore.Modules.Ordering.Application.Features.PlaceOrder;
@@ -20,6 +21,7 @@ internal sealed class PlaceOrderCommandHandler : ICommandHandler<PlaceOrderComma
     private readonly ICartModuleApi _cart;
     private readonly ICatalogModuleApi _catalog;
     private readonly IPaymentModuleApi _payments;
+    private readonly IShippingModuleApi _shipping;
     private readonly ILogger<PlaceOrderCommandHandler> _logger;
 
     public PlaceOrderCommandHandler(
@@ -27,12 +29,14 @@ internal sealed class PlaceOrderCommandHandler : ICommandHandler<PlaceOrderComma
         ICartModuleApi cart,
         ICatalogModuleApi catalog,
         IPaymentModuleApi payments,
+        IShippingModuleApi shipping,
         ILogger<PlaceOrderCommandHandler> logger)
     {
         _orders = orders;
         _cart = cart;
         _catalog = catalog;
         _payments = payments;
+        _shipping = shipping;
         _logger = logger;
     }
 
@@ -78,6 +82,17 @@ internal sealed class PlaceOrderCommandHandler : ICommandHandler<PlaceOrderComma
         {
             _logger.LogError(ex,
                 "Order {OrderId} was placed but recording its payment failed.", order.Id);
+        }
+
+        // Create a pending shipment for the order (cross-module call; best-effort).
+        try
+        {
+            await _shipping.CreateShipmentAsync(order.Id, ct);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex,
+                "Order {OrderId} was placed but creating its shipment failed.", order.Id);
         }
 
         // Clear the cart after the order commits (cross-module call; best-effort).
