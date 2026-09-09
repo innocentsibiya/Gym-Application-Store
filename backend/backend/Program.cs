@@ -5,7 +5,6 @@ using backend.IRepository;
 using backend.Repositories;
 using backend.Repository;
 using backend.Services;
-using backend.Services.Auth;
 using GymStore.BuildingBlocks.Cqrs;
 using GymStore.Common;
 using GymStore.Common.Modules;
@@ -13,6 +12,7 @@ using GymStore.Modules.Addresses;
 using GymStore.Modules.Cart;
 using GymStore.Modules.Cart.Application.Abstractions;
 using GymStore.Modules.Catalog;
+using GymStore.Modules.Identity;
 using GymStore.Modules.Inventory;
 using GymStore.Modules.Ordering;
 using GymStore.Modules.Payments;
@@ -21,11 +21,8 @@ using GymStore.Modules.Reviews.Application.Abstractions;
 using GymStore.Modules.Shipping;
 using GymStore.Modules.Suppliers;
 using GymStore.Modules.Wishlist;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -50,7 +47,8 @@ var modules = new IModule[]
     new InventoryModule(),
     new SuppliersModule(),
     new WishlistModule(),
-    new AddressesModule()
+    new AddressesModule(),
+    new IdentityModule()
 };
 
 // Add services to the container.
@@ -76,37 +74,15 @@ builder.Services.AddScoped<IProductInfoProvider, ProductInfoProvider>();
 // Lets the Reviews module resolve reviewer display names.
 builder.Services.AddScoped<IReviewerInfoProvider, ReviewerInfoProvider>();
 
-builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ICouponService, CouponService>();
-builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IPreferenceService, PreferenceService>();
 
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ICouponRepository, CouponRepository>();
 builder.Services.AddScoped<IPreferenceRepository, PreferenceRepository>();
 
-
-// JWT Authentication
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
-    {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-        ValidAudience = builder.Configuration["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
-    };
-});
-
+// JWT bearer authentication is configured by the Identity module (single source for the key);
+// authorization stays a host concern.
 builder.Services.AddAuthorization();
 
 builder.Services.AddStackExchangeRedisCache(options =>
@@ -152,6 +128,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseSession();

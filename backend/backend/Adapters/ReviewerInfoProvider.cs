@@ -1,37 +1,28 @@
-using backend.Data;
+using GymStore.Modules.Identity.Contracts;
 using GymStore.Modules.Reviews.Application.Abstractions;
-using Microsoft.EntityFrameworkCore;
 
 namespace backend.Adapters
 {
     /// <summary>
-    /// Host-side implementation of the Reviews module's <see cref="IReviewerInfoProvider"/> port,
-    /// backed by the user store in <see cref="GymStoreContext"/>. Exposes only a display name —
-    /// never any user secret. Moves to a Users/Identity module when one is extracted.
+    /// Bridges the Reviews module's <see cref="IReviewerInfoProvider"/> port to the Identity
+    /// module's public <see cref="IIdentityModuleApi"/>. Composition-root wiring: Reviews depends
+    /// only on its own port, Identity owns users, and the host connects the two — so no module
+    /// reads the Users table directly.
     /// </summary>
     public sealed class ReviewerInfoProvider : IReviewerInfoProvider
     {
-        private readonly GymStoreContext _context;
+        private readonly IIdentityModuleApi _identity;
 
-        public ReviewerInfoProvider(GymStoreContext context) => _context = context;
+        public ReviewerInfoProvider(IIdentityModuleApi identity) => _identity = identity;
 
         public async Task<IReadOnlyDictionary<long, ReviewerInfo>> GetReviewersAsync(
             IReadOnlyCollection<long> userIds, CancellationToken ct)
         {
-            if (userIds.Count == 0)
-            {
-                return new Dictionary<long, ReviewerInfo>();
-            }
+            var users = await _identity.GetUsersByIdsAsync(userIds, ct);
 
-            var rows = await _context.Users
-                .AsNoTracking()
-                .Where(u => userIds.Contains(u.Id))
-                .Select(u => new { u.Id, u.FirstName, u.LastName })
-                .ToListAsync(ct);
-
-            return rows.ToDictionary(
-                u => u.Id,
-                u => new ReviewerInfo(u.Id, $"{u.FirstName} {u.LastName}".Trim()));
+            return users.ToDictionary(
+                kv => kv.Key,
+                kv => new ReviewerInfo(kv.Value.Id, kv.Value.FullName));
         }
     }
 }

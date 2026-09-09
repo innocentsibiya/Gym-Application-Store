@@ -48,6 +48,8 @@
     <ProjectReference Include="..\Modules\Suppliers\GymStore.Modules.Suppliers\GymStore.Modules.Suppliers.csproj" />
     <ProjectReference Include="..\Modules\Wishlist\GymStore.Modules.Wishlist\GymStore.Modules.Wishlist.csproj" />
     <ProjectReference Include="..\Modules\Addresses\GymStore.Modules.Addresses\GymStore.Modules.Addresses.csproj" />
+    <ProjectReference Include="..\Modules\Identity\GymStore.Modules.Identity.Contracts\GymStore.Modules.Identity.Contracts.csproj" />
+    <ProjectReference Include="..\Modules\Identity\GymStore.Modules.Identity\GymStore.Modules.Identity.csproj" />
   </ItemGroup>
 
 </Project>
