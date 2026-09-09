@@ -2,7 +2,6 @@ using backend.Adapters;
 using backend.Data;
 using backend.Interfaces;
 using backend.IRepository;
-using backend.Repositories;
 using backend.Repository;
 using backend.Services;
 using GymStore.BuildingBlocks.Cqrs;
@@ -16,6 +15,7 @@ using GymStore.Modules.Identity;
 using GymStore.Modules.Inventory;
 using GymStore.Modules.Ordering;
 using GymStore.Modules.Payments;
+using GymStore.Modules.Preferences;
 using GymStore.Modules.Reviews;
 using GymStore.Modules.Reviews.Application.Abstractions;
 using GymStore.Modules.Shipping;
@@ -48,7 +48,8 @@ var modules = new IModule[]
     new SuppliersModule(),
     new WishlistModule(),
     new AddressesModule(),
-    new IdentityModule()
+    new IdentityModule(),
+    new PreferencesModule()
 };
 
 // Add services to the container.
@@ -75,11 +76,9 @@ builder.Services.AddScoped<IProductInfoProvider, ProductInfoProvider>();
 builder.Services.AddScoped<IReviewerInfoProvider, ReviewerInfoProvider>();
 
 builder.Services.AddScoped<ICouponService, CouponService>();
-builder.Services.AddScoped<IPreferenceService, PreferenceService>();
 
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<ICouponRepository, CouponRepository>();
-builder.Services.AddScoped<IPreferenceRepository, PreferenceRepository>();
 
 // JWT bearer authentication is configured by the Identity module (single source for the key);
 // authorization stays a host concern.
