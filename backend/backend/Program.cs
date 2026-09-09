@@ -19,6 +19,7 @@ using GymStore.Modules.Reviews;
 using GymStore.Modules.Reviews.Application.Abstractions;
 using GymStore.Modules.Shipping;
 using GymStore.Modules.Suppliers;
+using GymStore.Modules.Wishlist;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -46,7 +47,8 @@ var modules = new IModule[]
     new ShippingModule(),
     new ReviewsModule(),
     new InventoryModule(),
-    new SuppliersModule()
+    new SuppliersModule(),
+    new WishlistModule()
 };
 
 // Add services to the container.
@@ -74,14 +76,12 @@ builder.Services.AddScoped<IReviewerInfoProvider, ReviewerInfoProvider>();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ICouponService, CouponService>();
-builder.Services.AddScoped<IWishlistService, WishlistService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IAddressService, AddressService>();
 builder.Services.AddScoped<IPreferenceService, PreferenceService>();
 
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IWishlistRepository, WishlistRepository>();
 builder.Services.AddScoped<ICouponRepository, CouponRepository>();
 builder.Services.AddScoped<IAddressRepository, AddressRepository>();
 builder.Services.AddScoped<IPreferenceRepository, PreferenceRepository>();
