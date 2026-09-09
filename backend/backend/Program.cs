@@ -7,6 +7,8 @@ using backend.Repository;
 using backend.Services;
 using backend.Services.Auth;
 using GymStore.BuildingBlocks.Cqrs;
+using GymStore.Common;
+using GymStore.Common.Modules;
 using GymStore.Modules.Cart;
 using GymStore.Modules.Cart.Application.Abstractions;
 using GymStore.Modules.Catalog;
@@ -32,28 +34,38 @@ builder.Services.AddCors(options =>
     });
 });
 
-// Add services to the container.
-builder.Services.AddControllers()
-    // Register each module's assembly so its controllers are discovered by MVC.
-    .AddApplicationPart(CartModuleExtensions.Assembly)
-    .AddApplicationPart(CatalogModuleExtensions.Assembly)
-    .AddApplicationPart(OrderingModuleExtensions.Assembly)
-    .AddApplicationPart(PaymentsModuleExtensions.Assembly)
-    .AddApplicationPart(ShippingModuleExtensions.Assembly)
-    .AddApplicationPart(ReviewsModuleExtensions.Assembly)
-    .AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+// The modular-monolith modules, registered uniformly via the common IModule mechanism.
+var modules = new IModule[]
+{
+    new CartModule(),
+    new CatalogModule(),
+    new OrderingModule(),
+    new PaymentsModule(),
+    new ShippingModule(),
+    new ReviewsModule()
+};
 
-// CQRS dispatcher + modular monolith modules.
+// Add services to the container.
+var mvcBuilder = builder.Services.AddControllers()
+    .AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+foreach (var module in modules)
+{
+    // Discover each module's controllers.
+    mvcBuilder.AddApplicationPart(module.Assembly);
+}
+
+// Shared kernel + CQRS dispatcher, then each module's own services.
+builder.Services.AddCommon();
 builder.Services.AddCqrs();
-builder.Services.AddCartModule(builder.Configuration);
-builder.Services.AddCatalogModule(builder.Configuration);
-builder.Services.AddOrderingModule(builder.Configuration);
-builder.Services.AddPaymentsModule(builder.Configuration);
-builder.Services.AddShippingModule(builder.Configuration);
-builder.Services.AddReviewsModule(builder.Configuration);
-// Host adapter that lets the Cart module read product data (name/price/images).
+foreach (var module in modules)
+{
+    module.Register(builder.Services, builder.Configuration);
+}
+
+// Host adapters that satisfy module ports.
+// Lets the Cart module read product data (name/price/images) from Catalog.
 builder.Services.AddScoped<IProductInfoProvider, ProductInfoProvider>();
-// Host adapter that lets the Reviews module resolve reviewer display names.
+// Lets the Reviews module resolve reviewer display names.
 builder.Services.AddScoped<IReviewerInfoProvider, ReviewerInfoProvider>();
 
 builder.Services.AddScoped<IAuthService, AuthService>();

@@ -1,5 +1,6 @@
 using System.Reflection;
 using GymStore.BuildingBlocks.Cqrs;
+using GymStore.Common.Modules;
 using GymStore.Modules.Catalog.Application.Abstractions;
 using GymStore.Modules.Catalog.Contracts;
 using GymStore.Modules.Catalog.Infrastructure.Caching;
@@ -11,17 +12,12 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace GymStore.Modules.Catalog;
 
-/// <summary>
-/// Composition entry point for the Catalog module. The host calls <see cref="AddCatalogModule"/>
-/// and registers <see cref="Assembly"/> as an MVC application part so the module's controllers
-/// are discovered.
-/// </summary>
-public static class CatalogModuleExtensions
+/// <summary>Composition entry point for the Catalog module (registered via the common IModule mechanism).</summary>
+public sealed class CatalogModule : IModule
 {
-    /// <summary>The module assembly (used by the host for controller discovery).</summary>
-    public static Assembly Assembly => typeof(CatalogModuleExtensions).Assembly;
+    public Assembly Assembly => typeof(CatalogModule).Assembly;
 
-    public static IServiceCollection AddCatalogModule(this IServiceCollection services, IConfiguration configuration)
+    public void Register(IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<CatalogDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("ConnectionString")));
@@ -30,9 +26,6 @@ public static class CatalogModuleExtensions
         services.AddScoped<ICategoryRepository, CategoryRepository>();
         services.AddScoped<IProductCache, DistributedProductCache>();
         services.AddScoped<ICatalogModuleApi, CatalogModuleApi>();
-
         services.AddHandlersFromAssembly(Assembly);
-
-        return services;
     }
 }
