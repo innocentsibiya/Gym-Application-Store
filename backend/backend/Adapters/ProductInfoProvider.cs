@@ -1,43 +1,28 @@
-using backend.Data;
 using GymStore.Modules.Cart.Application.Abstractions;
-using Microsoft.EntityFrameworkCore;
+using GymStore.Modules.Catalog.Contracts;
 
 namespace backend.Adapters
 {
     /// <summary>
-    /// Host-side implementation of the Cart module's <see cref="IProductInfoProvider"/> port,
-    /// backed by the shared catalog data in <see cref="GymStoreContext"/>. When a dedicated
-    /// Catalog module is extracted, this adapter moves there and Cart depends on its contract.
+    /// Bridges the Cart module's <see cref="IProductInfoProvider"/> port to the Catalog module's
+    /// public <see cref="ICatalogModuleApi"/>. This is composition-root wiring: Cart depends only
+    /// on its own port, Catalog exposes its contract, and the host connects the two — so Cart no
+    /// longer reads product data from the shared DbContext.
     /// </summary>
     public sealed class ProductInfoProvider : IProductInfoProvider
     {
-        private readonly GymStoreContext _context;
+        private readonly ICatalogModuleApi _catalog;
 
-        public ProductInfoProvider(GymStoreContext context) => _context = context;
+        public ProductInfoProvider(ICatalogModuleApi catalog) => _catalog = catalog;
 
         public async Task<IReadOnlyDictionary<long, ProductInfo>> GetProductsAsync(
             IReadOnlyCollection<long> productIds, CancellationToken ct)
         {
-            if (productIds.Count == 0)
-            {
-                return new Dictionary<long, ProductInfo>();
-            }
+            var summaries = await _catalog.GetProductsByIdsAsync(productIds, ct);
 
-            var rows = await _context.Products
-                .AsNoTracking()
-                .Where(p => productIds.Contains(p.Id))
-                .Select(p => new
-                {
-                    p.Id,
-                    p.Name,
-                    p.Price,
-                    ImageUrls = p.Images.Select(img => img.ImageUrl).ToList()
-                })
-                .ToListAsync(ct);
-
-            return rows.ToDictionary(
-                r => r.Id,
-                r => new ProductInfo(r.Id, r.Name, r.Price, r.ImageUrls));
+            return summaries.ToDictionary(
+                kv => kv.Key,
+                kv => new ProductInfo(kv.Value.ProductId, kv.Value.Name, kv.Value.Price, kv.Value.ImageUrls));
         }
     }
 }

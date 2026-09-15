@@ -9,6 +9,7 @@ using backend.Services.Auth;
 using GymStore.BuildingBlocks.Cqrs;
 using GymStore.Modules.Cart;
 using GymStore.Modules.Cart.Application.Abstractions;
+using GymStore.Modules.Catalog;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -28,19 +29,19 @@ builder.Services.AddCors(options =>
 
 // Add services to the container.
 builder.Services.AddControllers()
-    // Register the Cart module's assembly so its CartController is discovered by MVC.
+    // Register each module's assembly so its controllers are discovered by MVC.
     .AddApplicationPart(CartModuleExtensions.Assembly)
+    .AddApplicationPart(CatalogModuleExtensions.Assembly)
     .AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
 // CQRS dispatcher + modular monolith modules.
 builder.Services.AddCqrs();
 builder.Services.AddCartModule(builder.Configuration);
+builder.Services.AddCatalogModule(builder.Configuration);
 // Host adapter that lets the Cart module read product data (name/price/images).
 builder.Services.AddScoped<IProductInfoProvider, ProductInfoProvider>();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IProductService, ProductService>();
-builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IReviewService, ReviewService>();
 builder.Services.AddScoped<ICouponService, CouponService>();
@@ -52,8 +53,6 @@ builder.Services.AddScoped<IAddressService, AddressService>();
 builder.Services.AddScoped<IPreferenceService, PreferenceService>();
 
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-builder.Services.AddScoped<IProductRepository, ProductRepository>();
-builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IWishlistRepository, WishlistRepository>();
 builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
