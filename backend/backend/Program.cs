@@ -10,6 +10,7 @@ using GymStore.BuildingBlocks.Cqrs;
 using GymStore.Modules.Cart;
 using GymStore.Modules.Cart.Application.Abstractions;
 using GymStore.Modules.Catalog;
+using GymStore.Modules.Ordering;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -32,17 +33,18 @@ builder.Services.AddControllers()
     // Register each module's assembly so its controllers are discovered by MVC.
     .AddApplicationPart(CartModuleExtensions.Assembly)
     .AddApplicationPart(CatalogModuleExtensions.Assembly)
+    .AddApplicationPart(OrderingModuleExtensions.Assembly)
     .AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
 // CQRS dispatcher + modular monolith modules.
 builder.Services.AddCqrs();
 builder.Services.AddCartModule(builder.Configuration);
 builder.Services.AddCatalogModule(builder.Configuration);
+builder.Services.AddOrderingModule(builder.Configuration);
 // Host adapter that lets the Cart module read product data (name/price/images).
 builder.Services.AddScoped<IProductInfoProvider, ProductInfoProvider>();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IReviewService, ReviewService>();
 builder.Services.AddScoped<ICouponService, CouponService>();
 builder.Services.AddScoped<IWishlistService, WishlistService>();
@@ -58,7 +60,6 @@ builder.Services.AddScoped<IWishlistRepository, WishlistRepository>();
 builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
 builder.Services.AddScoped<ICouponRepository, CouponRepository>();
 builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
-builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
 builder.Services.AddScoped<IAddressRepository, AddressRepository>();
 builder.Services.AddScoped<IPreferenceRepository, PreferenceRepository>();

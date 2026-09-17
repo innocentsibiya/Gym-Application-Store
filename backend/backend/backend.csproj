@@ -39,6 +39,7 @@
     <ProjectReference Include="..\Modules\Cart\GymStore.Modules.Cart\GymStore.Modules.Cart.csproj" />
     <ProjectReference Include="..\Modules\Catalog\GymStore.Modules.Catalog.Contracts\GymStore.Modules.Catalog.Contracts.csproj" />
     <ProjectReference Include="..\Modules\Catalog\GymStore.Modules.Catalog\GymStore.Modules.Catalog.csproj" />
+    <ProjectReference Include="..\Modules\Ordering\GymStore.Modules.Ordering\GymStore.Modules.Ordering.csproj" />
   </ItemGroup>
 
 </Project>
