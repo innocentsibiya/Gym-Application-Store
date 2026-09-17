@@ -23,7 +23,7 @@ public class OrdersController : ControllerBase
     public async Task<IActionResult> PlaceOrder([FromBody] PlaceOrderRequest request)
     {
         var order = await _dispatcher.Send(
-            new PlaceOrderCommand(request.UserId, request.ShippingAddressId, request.BillingAddressId));
+            new PlaceOrderCommand(request.UserId, request.ShippingAddressId, request.BillingAddressId, request.Method));
         return Ok(order);
     }
 
