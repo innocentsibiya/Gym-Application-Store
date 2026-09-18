@@ -2,8 +2,8 @@ namespace GymStore.Modules.Ordering.Domain;
 
 /// <summary>
 /// The Order aggregate root, owned by the Ordering module. User and Address are referenced by
-/// id only (other modules own them); the aggregate itself holds Items and Shipments. Payment is
-/// owned by the Payments module and recorded via its contract at checkout.
+/// id only (other modules own them); the aggregate itself holds only its Items. Payment and
+/// Shipment are owned by their own modules and created via their contracts at checkout.
 /// </summary>
 public class Order
 {
@@ -26,5 +26,4 @@ public class Order
     public DateTime? UpdatedAt { get; set; }
 
     public List<OrderItem> Items { get; set; } = new();
-    public List<Shipment> Shipments { get; set; } = new();
 }
