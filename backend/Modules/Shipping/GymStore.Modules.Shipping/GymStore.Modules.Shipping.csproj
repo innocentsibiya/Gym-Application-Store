@@ -23,6 +23,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\BuildingBlocks\GymStore.BuildingBlocks.csproj" />
     <ProjectReference Include="..\GymStore.Modules.Shipping.Contracts\GymStore.Modules.Shipping.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\Common\GymStore.Common\GymStore.Common.csproj" />
   </ItemGroup>
 
 </Project>

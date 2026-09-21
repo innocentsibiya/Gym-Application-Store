@@ -24,6 +24,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\BuildingBlocks\GymStore.BuildingBlocks.csproj" />
     <ProjectReference Include="..\GymStore.Modules.Catalog.Contracts\GymStore.Modules.Catalog.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\Common\GymStore.Common\GymStore.Common.csproj" />
   </ItemGroup>
 
 </Project>
