@@ -12,6 +12,7 @@ using GymStore.Common.Modules;
 using GymStore.Modules.Cart;
 using GymStore.Modules.Cart.Application.Abstractions;
 using GymStore.Modules.Catalog;
+using GymStore.Modules.Inventory;
 using GymStore.Modules.Ordering;
 using GymStore.Modules.Payments;
 using GymStore.Modules.Reviews;
@@ -42,7 +43,8 @@ var modules = new IModule[]
     new OrderingModule(),
     new PaymentsModule(),
     new ShippingModule(),
-    new ReviewsModule()
+    new ReviewsModule(),
+    new InventoryModule()
 };
 
 // Add services to the container.
@@ -71,7 +73,6 @@ builder.Services.AddScoped<IReviewerInfoProvider, ReviewerInfoProvider>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ICouponService, CouponService>();
 builder.Services.AddScoped<IWishlistService, WishlistService>();
-builder.Services.AddScoped<IInventoryService, InventoryService>();
 builder.Services.AddScoped<ISupplierService, SupplierService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IAddressService, AddressService>();
@@ -82,7 +83,6 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IWishlistRepository, WishlistRepository>();
 builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
 builder.Services.AddScoped<ICouponRepository, CouponRepository>();
-builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
 builder.Services.AddScoped<IAddressRepository, AddressRepository>();
 builder.Services.AddScoped<IPreferenceRepository, PreferenceRepository>();
 
