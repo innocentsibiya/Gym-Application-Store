@@ -9,6 +9,7 @@ using backend.Services.Auth;
 using GymStore.BuildingBlocks.Cqrs;
 using GymStore.Common;
 using GymStore.Common.Modules;
+using GymStore.Modules.Addresses;
 using GymStore.Modules.Cart;
 using GymStore.Modules.Cart.Application.Abstractions;
 using GymStore.Modules.Catalog;
@@ -48,7 +49,8 @@ var modules = new IModule[]
     new ReviewsModule(),
     new InventoryModule(),
     new SuppliersModule(),
-    new WishlistModule()
+    new WishlistModule(),
+    new AddressesModule()
 };
 
 // Add services to the container.
@@ -77,13 +79,11 @@ builder.Services.AddScoped<IReviewerInfoProvider, ReviewerInfoProvider>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ICouponService, CouponService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
-builder.Services.AddScoped<IAddressService, AddressService>();
 builder.Services.AddScoped<IPreferenceService, PreferenceService>();
 
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ICouponRepository, CouponRepository>();
-builder.Services.AddScoped<IAddressRepository, AddressRepository>();
 builder.Services.AddScoped<IPreferenceRepository, PreferenceRepository>();
 
 
