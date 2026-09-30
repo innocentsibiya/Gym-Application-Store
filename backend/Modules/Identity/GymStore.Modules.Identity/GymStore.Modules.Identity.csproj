@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <!-- Allow the module's test project to construct internal handlers/security types directly. -->
+  <ItemGroup>
+    <InternalsVisibleTo Include="GymStore.Modules.Identity.Tests" />
+  </ItemGroup>
+
+  <!-- The module hosts its own API controller and configures JWT authentication. -->
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.8" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.14.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\BuildingBlocks\GymStore.BuildingBlocks.csproj" />
+    <ProjectReference Include="..\..\..\Common\GymStore.Common\GymStore.Common.csproj" />
+    <ProjectReference Include="..\GymStore.Modules.Identity.Contracts\GymStore.Modules.Identity.Contracts.csproj" />
+  </ItemGroup>
+
+</Project>
