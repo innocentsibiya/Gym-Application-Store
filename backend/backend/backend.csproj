@@ -50,6 +50,7 @@
     <ProjectReference Include="..\Modules\Addresses\GymStore.Modules.Addresses\GymStore.Modules.Addresses.csproj" />
     <ProjectReference Include="..\Modules\Identity\GymStore.Modules.Identity.Contracts\GymStore.Modules.Identity.Contracts.csproj" />
     <ProjectReference Include="..\Modules\Identity\GymStore.Modules.Identity\GymStore.Modules.Identity.csproj" />
+    <ProjectReference Include="..\Modules\Preferences\GymStore.Modules.Preferences\GymStore.Modules.Preferences.csproj" />
   </ItemGroup>
 
 </Project>
